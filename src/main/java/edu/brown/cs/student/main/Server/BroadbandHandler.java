@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.Searcher;
+package edu.brown.cs.student.main.Server;
 import spark.Request;
 import spark.Response;
 import spark.Route;
