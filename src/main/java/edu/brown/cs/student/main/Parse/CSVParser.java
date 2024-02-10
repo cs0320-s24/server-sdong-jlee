@@ -1,7 +1,7 @@
 package edu.brown.cs.student.main.Parse;
 
 import edu.brown.cs.student.main.CreatorInterface.CreatorFromRow;
-import edu.brown.cs.student.main.FactoryFailureException;
+import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;

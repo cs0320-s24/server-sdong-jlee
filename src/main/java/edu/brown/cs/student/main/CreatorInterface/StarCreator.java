@@ -1,6 +1,5 @@
 package edu.brown.cs.student.main.CreatorInterface;
 
-import edu.brown.cs.student.main.FactoryFailureException;
 import java.util.List;
 import java.util.regex.Pattern;
 
