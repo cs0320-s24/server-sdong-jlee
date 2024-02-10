@@ -19,7 +19,7 @@ public class Server {
                     response.header("Access-Control-Allow-Methods", "*");
                 });
 
-//        Spark.get("order", new OrderHandler(menu));
+        Spark.get("loadcsv", new LoadHandler());
 //        Spark.get("activity", new ActivityHandler());
 
         Spark.init();
