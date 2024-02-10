@@ -1,5 +1,6 @@
 package edu.brown.cs.student.main;
 
+import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
 import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import edu.brown.cs.student.main.Searcher.Search;

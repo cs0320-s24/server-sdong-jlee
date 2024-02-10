@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import edu.brown.cs.student.main.CreatorInterface.Star;
 import edu.brown.cs.student.main.CreatorInterface.StarCreator;
 import edu.brown.cs.student.main.CreatorInterface.StringCreator;
-import edu.brown.cs.student.main.FactoryFailureException;
+import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import java.io.FileReader;
 import java.io.IOException;
