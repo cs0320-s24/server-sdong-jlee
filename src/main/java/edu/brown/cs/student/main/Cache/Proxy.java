@@ -1,2 +1,5 @@
-package edu.brown.cs.student.main.Cache;public class Proxy {
+package edu.brown.cs.student.main.Cache;
+
+public class Proxy {
+
 }
