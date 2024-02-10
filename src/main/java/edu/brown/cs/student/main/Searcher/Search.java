@@ -58,7 +58,7 @@ public class Search {
     List<String> returnList = new ArrayList<>();
     Boolean containsVal = false;
 
-    if (!this.fileName.contains("/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/")) {
+    if (!this.fileName.contains("/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/")) {
       System.err.println("Error: unable to read file: " + this.fileName);
       return null;
     }
@@ -96,7 +96,7 @@ public class Search {
 
     List<String> returnList = new ArrayList<>();
     boolean containsVal = false;
-    if (!this.fileName.contains("/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/")) {
+    if (!this.fileName.contains("/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/")) {
       System.err.println("Error: unable to read file: " + this.fileName);
       return null;
     }

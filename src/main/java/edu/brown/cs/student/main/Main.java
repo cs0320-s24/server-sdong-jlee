@@ -35,7 +35,7 @@ public final class Main {
       //      restrict to only data folder
       reader =
           new FileReader(
-              "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/" + userInput[0]);
+              "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/" + userInput[0]);
     } catch (Exception e) {
       System.err.println("Error: Unable to read file: " + userInput[0]);
     }
@@ -51,14 +51,14 @@ public final class Main {
           new Search(
               stringCreator,
               new CSVParser<>(reader, stringCreator, hasHeader),
-              "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/" + userInput[0]);
+              "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/" + userInput[0]);
       System.out.println(search.searchFile(userInput[1], userInput[3], true));
     } else if (userInput.length == 3) {
       Search search =
           new Search(
               stringCreator,
               new CSVParser<>(reader, stringCreator, hasHeader),
-              "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/" + userInput[0]);
+              "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/" + userInput[0]);
       System.out.println(search.searchFile(userInput[1]));
     } else {
       System.err.println("Error: Incorrect inputs. Make sure inputs are formatted correctly");

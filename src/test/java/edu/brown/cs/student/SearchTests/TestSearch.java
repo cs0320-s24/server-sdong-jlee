@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 public class TestSearch {
 
   String testfile =
-      "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/census/dol_ri_earnings_disparity.csv";
+      "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/census/dol_ri_earnings_disparity.csv";
   String testline = "RI,White,\" $1,058.47 \",395773.6521, $1.00 ,75%";
   FileReader reader = new FileReader(testfile);
   StringCreator stringCreator = new StringCreator();
@@ -25,6 +25,15 @@ public class TestSearch {
 
   public TestSearch() throws FileNotFoundException {}
 
+
+  @Test
+  public void RITownSearch() throws IOException, FactoryFailureException {
+    String RIfile = "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/RITownIncome/RI.csv";
+    FileReader riReader = new FileReader((RIfile));
+    CSVParser<String> riParser = new CSVParser<>(riReader, stringCreator, true);
+    Search search = new Search(stringCreator, riParser, RIfile);
+    assertEquals(List.of("Barrington,\"130,455.00\",\"154,441.00\",\"69,917.00\"\n"), search.searchFile("Barrington"));
+  }
   @Test
   public void basicSearchNoHeader() throws IOException, FactoryFailureException {
     Search search = new Search(stringCreator, csvParser, testfile);
@@ -68,13 +77,13 @@ public class TestSearch {
   public void fileOutsideDirectory() throws IOException, FactoryFailureException {
     FileReader reader =
         new FileReader(
-            "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/config/intellij-java-google-style.xml");
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/src/main/java/edu/brown/cs/student/main/CreatorInterface/CreatorFromRow.java");
     CSVParser<String> csvParser = new CSVParser<>(reader, stringCreator, true);
     Search search =
         new Search(
             stringCreator,
             csvParser,
-            "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/config/intellij-java-google-style.xml");
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/config/intellij-java-google-style.xml");
     assertNull(search.searchFile("White", "State", true));
   }
 
@@ -82,13 +91,13 @@ public class TestSearch {
   public void testMalformedColsInvalID() throws IOException, FactoryFailureException {
     FileReader reader =
         new FileReader(
-            "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/malformed/malformed_signs.csv");
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/malformed/malformed_signs.csv");
     CSVParser<String> csvParser = new CSVParser<>(reader, stringCreator, true);
     Search search =
         new Search(
             stringCreator,
             csvParser,
-            "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/malformed/malformed_signs.csv");
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/malformed/malformed_signs.csv");
     assertEquals(List.of("Unable to find: 'Nick' in file"), search.searchFile("Nick", "3", false));
   }
 
@@ -96,13 +105,13 @@ public class TestSearch {
   public void testMalformedCols() throws IOException, FactoryFailureException {
     FileReader reader =
         new FileReader(
-            "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/malformed/malformed_signs.csv");
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/malformed/malformed_signs.csv");
     CSVParser<String> csvParser = new CSVParser<>(reader, stringCreator, true);
     Search search =
         new Search(
             stringCreator,
             csvParser,
-            "/Users/masonlee/Desktop/CS/CS32/projects/csv-jhmlee/data/malformed/malformed_signs.csv");
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/malformed/malformed_signs.csv");
     assertEquals(List.of("Gemini,Roberto,Nick\n"), search.searchFile("Nick"));
   }
 
