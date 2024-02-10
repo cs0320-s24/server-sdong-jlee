@@ -14,16 +14,18 @@ import java.util.Map;
 import java.util.Set;
 
 public class LoadHandler implements Route{
+
     @Override
     public Object handle(Request request, Response response) throws Exception {
         Set<String> params = request.queryParams();
-        //     System.out.println(params);
+             System.out.println(params);
         String filepath = request.queryParams("filepath");
-        //     System.out.println(filepath);
+             System.out.println(filepath);
 
         // Creates a hashmap to store the results of the request
         Map<String, Object> responseMap = new HashMap<>();
         try {
+            System.out.println("success");
             // Sends a request to the API and receives JSON back
             String filepathJson = this.sendRequest();
 
