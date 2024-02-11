@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.Server;
 
 import static spark.Spark.after;
 
+import edu.brown.cs.student.main.Searcher.Search;
 import spark.Spark;
 
 public class Server {
@@ -18,7 +19,7 @@ public class Server {
 
     CSVState csvState = new CSVState();
     Spark.get("loadcsv", new LoadHandler(csvState));
-    //        Spark.get("activity", new ActivityHandler());
+    Spark.get("searchcsv", new SearchHandler(csvState));
 
     Spark.init();
     Spark.awaitInitialization();

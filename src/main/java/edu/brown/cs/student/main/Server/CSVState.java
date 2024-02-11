@@ -14,4 +14,12 @@ public class CSVState {
   public void setHasHeader(boolean hasHeader) {
     this.hasHeader = hasHeader;
   }
+
+  public boolean fileNameIsEmpty() {
+    return fileName == null ? true : false;
+  }
+
+  public String getFileName() {
+    return this.fileName;
+  }
 }
