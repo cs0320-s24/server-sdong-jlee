@@ -43,7 +43,6 @@ public class SearchHandler implements Route {
     // Check that file is loaded
     if (this.csvState.fileNameIsEmpty()) {
       responseMap.put("result", "Exception: must load a csv file to search");
-      System.out.println("got here 3");
       return responseMap;
     }
     System.out.println("got here 2" );
@@ -56,10 +55,10 @@ public class SearchHandler implements Route {
         this.hasHeader = false;
         break;
       case "":
-        responseMap.put("result", "Exception: no value for hasHeader");
+        responseMap.put("result", "Exception: No value for hasHeader");
         return responseMap;
       default:
-        responseMap.put("result", "Exception: not a valid input. Input true or false");
+        responseMap.put("result", "Exception: Invalid input. Input true or false");
         return responseMap;
     }
     StringCreator stringCreator = new StringCreator();
