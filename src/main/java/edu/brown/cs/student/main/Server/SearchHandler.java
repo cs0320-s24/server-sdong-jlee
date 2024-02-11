@@ -76,7 +76,6 @@ public class SearchHandler implements Route {
     }
 
 
-
 //    responseMap.put("result", "search success");
     return responseMap;
   }
