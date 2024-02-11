@@ -19,7 +19,9 @@ public class Server {
                     response.header("Access-Control-Allow-Methods", "*");
                 });
 
-        Spark.get("loadcsv", new LoadHandler());
+
+        CSVState csvState = new CSVState();
+        Spark.get("loadcsv", new LoadHandler(csvState));
 //        Spark.get("activity", new ActivityHandler());
 
         Spark.init();
@@ -31,6 +33,7 @@ public class Server {
 
     }
 }
+
 
 
 
