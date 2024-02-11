@@ -2,10 +2,10 @@ package edu.brown.cs.student.ParserTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
 import edu.brown.cs.student.main.CreatorInterface.Star;
 import edu.brown.cs.student.main.CreatorInterface.StarCreator;
 import edu.brown.cs.student.main.CreatorInterface.StringCreator;
-import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,7 +22,8 @@ public class TestCSVParser {
   String line2 =
       "2,Black,2020,2020,72443,54768,\"Bristol County, RI\",05000US44001,bristol-county-ri";
 
-  String starFile = "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/stars/stardata.csv";
+  String starFile =
+      "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/stars/stardata.csv";
   static final Pattern regexSplitCSVRow =
       Pattern.compile(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*(?![^\\\"]*\\\"))");
 
@@ -30,13 +31,15 @@ public class TestCSVParser {
 
   @Test
   public void RITownParse() throws IOException, FactoryFailureException {
-    FileReader reader = new FileReader("/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/RITownIncome/RI.csv");
+    FileReader reader =
+        new FileReader(
+            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/RITownIncome/RI.csv");
 
     StringCreator readerObject = new StringCreator();
     CSVParser<String> parser = new CSVParser<>(reader, readerObject, true);
     List<String> result = parser.parseCSV();
     assertEquals(40, result.size());
-    //assertEquals(line, result.get(0));
+    // assertEquals(line, result.get(0));
   }
 
   @Test

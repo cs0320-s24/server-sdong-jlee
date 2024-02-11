@@ -3,8 +3,8 @@ package edu.brown.cs.student.SearchTests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
+import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import edu.brown.cs.student.main.Searcher.Search;
 import java.io.FileNotFoundException;
@@ -25,15 +25,18 @@ public class TestSearch {
 
   public TestSearch() throws FileNotFoundException {}
 
-
   @Test
   public void RITownSearch() throws IOException, FactoryFailureException {
-    String RIfile = "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/RITownIncome/RI.csv";
+    String RIfile =
+        "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/RITownIncome/RI.csv";
     FileReader riReader = new FileReader((RIfile));
     CSVParser<String> riParser = new CSVParser<>(riReader, stringCreator, true);
     Search search = new Search(stringCreator, riParser, RIfile);
-    assertEquals(List.of("Barrington,\"130,455.00\",\"154,441.00\",\"69,917.00\"\n"), search.searchFile("Barrington"));
+    assertEquals(
+        List.of("Barrington,\"130,455.00\",\"154,441.00\",\"69,917.00\"\n"),
+        search.searchFile("Barrington"));
   }
+
   @Test
   public void basicSearchNoHeader() throws IOException, FactoryFailureException {
     Search search = new Search(stringCreator, csvParser, testfile);

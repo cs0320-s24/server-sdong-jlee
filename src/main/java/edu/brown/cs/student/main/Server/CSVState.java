@@ -2,18 +2,16 @@ package edu.brown.cs.student.main.Server;
 
 public class CSVState {
 
-    private String fileName;
-    private boolean hasHeader;
+  private String fileName;
+  private boolean hasHeader;
 
+  public CSVState() {}
 
-    public CSVState () {
-    }
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public void setHasHeader(boolean hasHeader) {
-        this.hasHeader = hasHeader;
-    }
+  public void setHasHeader(boolean hasHeader) {
+    this.hasHeader = hasHeader;
+  }
 }
