@@ -36,13 +36,12 @@ public class SearchHandler implements Route {
     String searchItem = request.queryParams("searchItem");
     System.out.println(searchItem);
 
-
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
 
     // Check that file is loaded
     if (this.csvState.fileNameIsEmpty()) {
-      responseMap.put("result", "Exception: must load a csv file to search");
+      responseMap.put("result", "Exception: Must load a csv file to search with loadcsv endpoint and filepath");
       return responseMap;
     }
 
@@ -54,10 +53,10 @@ public class SearchHandler implements Route {
         this.hasHeader = false;
         break;
       case "":
-        responseMap.put("result", "Exception: no value for hasHeader");
+        responseMap.put("result", "Exception: No value for hasHeader");
         return responseMap;
       default:
-        responseMap.put("result", "Exception: not a valid input. Input true or false");
+        responseMap.put("result", "Exception: Invalid input. Input true or false");
         return responseMap;
     }
 
