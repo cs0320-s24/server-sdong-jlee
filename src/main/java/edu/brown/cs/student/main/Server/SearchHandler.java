@@ -2,24 +2,22 @@ package edu.brown.cs.student.main.Server;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import edu.brown.cs.student.main.Searcher.Search;
-import spark.Request;
-import spark.Response;
-import spark.Route;
-
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
 public class SearchHandler implements Route {
   private CSVState csvState;
   private boolean hasHeader;
-
 
   public SearchHandler(CSVState csvState) {
     this.csvState = csvState;
@@ -44,11 +42,12 @@ public class SearchHandler implements Route {
 
     // Check that file is loaded
     if (this.csvState.fileNameIsEmpty()) {
-      responseMap.put("result", "Exception: Must load a csv file to search with loadcsv endpoint and filepath");
+      responseMap.put("result", "Exception: must load a csv file to search");
       return responseMap;
     }
+    System.out.println("got here 2" );
 
-    switch(hasHeaderString) {
+    switch (hasHeaderString) {
       case "true":
         this.hasHeader = true;
         break;
@@ -62,46 +61,74 @@ public class SearchHandler implements Route {
         responseMap.put("result", "Exception: Invalid input. Input true or false");
         return responseMap;
     }
-
     StringCreator stringCreator = new StringCreator();
     String file = this.csvState.getFileName();
 
+    try {
+      //      restrict to only data folder
+      FileReader freader = new FileReader("data/" + file);
+    } catch (Exception e) {
+      //TODO make a better print
+      System.err.println("Error: Unable to read file: " + file);
+    }
     FileReader freader = new FileReader("data/" + file);
-    System.out.println("test past filerader");
-
     CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.hasHeader);
     Search search = new Search(stringCreator, parser, file);
+    List<String> searchResult = new ArrayList<>();
 
-    List<String> matchingRows;
     if (columnIdentifier == null) {
-      matchingRows = search.searchFile(searchItem);
+      searchResult = search.searchFile(searchItem);
+      System.out.println(searchResult);
     } else {
-      matchingRows = search.searchFile(searchItem, columnIdentifier, this.hasHeader);
-    }
-    System.out.println(matchingRows);
-
-    if (matchingRows.size() == 0) {
-      responseMap.put("result", "Exception: Search could not find: " + searchItem);
-      return responseMap;
-
-    } else {
-
-      // as in fromJson, we need to work with ingredients.
-      // The polymorphic factory will automatically _insert_ the "type" field
-      Moshi moshi = new Moshi.Builder().build();
-      // Uses a similar pattern but turns it toJson and returns it as a string
-      JsonAdapter<List<String>> adapter = moshi.adapter(Types.newParameterizedType(List.class, String.class));
-      System.out.println("Test A");
-      responseMap.put("result", adapter.toJson(matchingRows));
+      searchResult = search.searchFile(searchItem, columnIdentifier, this.hasHeader);
+      System.out.println(searchResult);
     }
 
-    System.out.println("Test B");
-
-//    responseMap.put("result", "search success");
-    return responseMap;
+    // if no match
+    if (searchResult.contains("Unable to find: '" + searchItem + "' in file")) {
+      return new SearchNoMatchFailureResponse().serialize();
+    }
+    responseMap.put("success", searchResult);
+    System.out.println(searchResult);
+    return new SearchSuccessResponse(responseMap).serialize();
   }
 
-}
+  /** Response object to send, containing a soup with certain ingredients in it */
+  public record SearchSuccessResponse(String response_type, Map<String, Object> responseMap) {
+    public SearchSuccessResponse(Map<String, Object> responseMap) {
+      this("success", responseMap);
+    }
+    /**
+     * @return this response, serialized as Json
+     */
+    String serialize() {
+      try {
+        // Initialize Moshi which takes in this class and returns it as JSON!
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<SearchSuccessResponse> adapter = moshi.adapter(SearchSuccessResponse.class);
+        return adapter.toJson(this);
+      } catch (Exception e) {
+        // For debugging purposes, show in the console _why_ this fails
+        // Otherwise we'll just get an error 500 from the API in integration
+        // testing.
+        e.printStackTrace();
+        throw e;
+      }
+    }
+  }
 
-// /loadcsv?filepath=data/RITownIncome/RI.csv
-// /searchcsv?hasHeader=true&columnIdentifier=City/Town&searchItem=Exeter
+  /** Response object to send if someone requested soup from an empty Menu */
+  public record SearchNoMatchFailureResponse(String error) {
+    public SearchNoMatchFailureResponse() {
+      this("no match found in file");
+    }
+
+    /**
+     * @return this response, serialized as Json
+     */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(SearchNoMatchFailureResponse.class).toJson(this);
+    }
+  }
+}
