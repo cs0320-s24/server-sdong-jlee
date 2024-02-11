@@ -9,8 +9,8 @@ import spark.Response;
 import spark.Route;
 
 public class LoadHandler implements Route {
-  private CSVState csvState;
 
+  private CSVState csvState;
   public LoadHandler(CSVState csvState) {
     this.csvState = csvState;
   }
