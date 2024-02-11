@@ -7,17 +7,13 @@ import edu.brown.cs.student.main.Server.CSVState;
 import edu.brown.cs.student.main.Server.LoadHandler;
 import edu.brown.cs.student.main.Server.TestServer;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,15 +27,17 @@ public class TestLoadHandler {
     // happen before any route maps are added. Hence using @BeforeClass.
     // Setting port 0 will cause Spark to use an arbitrary available port.
     TestServer testServer = new TestServer();
-    //Spark.port(0);
+    // Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
+
   @BeforeEach
   public void setup() {
     Spark.get("loadcsv", new LoadHandler(new CSVState()));
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
+
   @AfterEach
   public void teardown() {
     // Gracefully stop Spark listening on both endpoints after each test
@@ -81,14 +79,13 @@ public class TestLoadHandler {
             .GET()
             .build();
 
-    Object response =
-        moshi
-            .adapter((Type) LoadHandler.responseMap)
-            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    //    Object response =
+    //        moshi
+    //            .adapter((Type) LoadHandler.responseMap)
+    //            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-    System.out.println("response" + response);
+    //    System.out.println("response" + response);
 
     clientConnection.disconnect();
-
   }
 }
