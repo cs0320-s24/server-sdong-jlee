@@ -65,7 +65,7 @@ public class SearchHandler implements Route {
     String file = this.csvState.getFileName();
 
     try {
-      //      restrict to only data folder
+      // restrict to only data folder
       FileReader freader = new FileReader("data/" + file);
     } catch (Exception e) {
       //TODO make a better print
@@ -93,7 +93,7 @@ public class SearchHandler implements Route {
     return new SearchSuccessResponse(responseMap).serialize();
   }
 
-  /** Response object to send, containing a soup with certain ingredients in it */
+  /** Response object to send */
   public record SearchSuccessResponse(String response_type, Map<String, Object> responseMap) {
     public SearchSuccessResponse(Map<String, Object> responseMap) {
       this("success", responseMap);
