@@ -30,3 +30,6 @@ public class Server {
     System.out.println("Server started at http://localhost:" + port);
   }
 }
+
+// /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
+// /searchcsv?columnIdentifier=City/Town&searchItem=Bristol

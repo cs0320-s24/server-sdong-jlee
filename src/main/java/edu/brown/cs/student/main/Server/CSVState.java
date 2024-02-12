@@ -22,4 +22,9 @@ public class CSVState {
   public String getFileName() {
     return this.fileName;
   }
+
+  public boolean getHasHeader(){
+    return hasHeader;
+  }
+
 }

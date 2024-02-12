@@ -48,7 +48,7 @@ public class ViewHandler implements Route {
       return new SearchHandler.UnableToReadFile().serialize();
     }
 
-    CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.hasHeader);
+    CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
     Search search = new Search(stringCreator, parser, file);
     List<String> searchResult;
 
@@ -59,12 +59,8 @@ public class ViewHandler implements Route {
 
 
 
-
-
     return null;
   }
-
-
 
 
 
@@ -78,7 +74,7 @@ public class ViewHandler implements Route {
     /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
-      return moshi.adapter(SearchHandler.FileNotLoadedResponse.class).toJson(this);
+      return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
     }
   }
 

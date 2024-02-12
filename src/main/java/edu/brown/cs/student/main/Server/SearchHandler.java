@@ -6,7 +6,6 @@ import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import edu.brown.cs.student.main.Searcher.Search;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import spark.Route;
 
 public class SearchHandler implements Route {
   private CSVState csvState;
-  private boolean hasHeader;
 
   public SearchHandler(CSVState csvState) {
     this.csvState = csvState;
@@ -26,12 +24,10 @@ public class SearchHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
     Set<String> params = request.queryParams();
-    String hasHeaderString = request.queryParams("hasHeader");
     String columnIdentifier = request.queryParams("columnIdentifier");
     String searchItem = request.queryParams("searchItem");
 
     System.out.println(params);
-    System.out.println(hasHeaderString);
     System.out.println(columnIdentifier);
     System.out.println(searchItem);
 
@@ -41,21 +37,6 @@ public class SearchHandler implements Route {
     // Check that file is loaded
     if (this.csvState.fileNameIsEmpty()) {
       return new FileNotLoadedResponse().serialize();
-    }
-
-    switch (hasHeaderString) {
-      case "true":
-        this.hasHeader = true;
-        break;
-      case "false":
-        this.hasHeader = false;
-        break;
-      case "":
-        responseMap.put("result", "Exception: No value for hasHeader");
-        return responseMap;
-      default:
-        responseMap.put("result", "Exception: Invalid input. Input true or false");
-        return responseMap;
     }
 
     StringCreator stringCreator = new StringCreator();
@@ -68,7 +49,7 @@ public class SearchHandler implements Route {
       return new UnableToReadFile().serialize();
     }
 
-    CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.hasHeader);
+    CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
     Search search = new Search(stringCreator, parser, file);
     List<String> searchResult;
 
@@ -76,7 +57,7 @@ public class SearchHandler implements Route {
       searchResult = search.searchFile(searchItem);
       System.out.println(searchResult);
     } else {
-      searchResult = search.searchFile(searchItem, columnIdentifier, this.hasHeader);
+      searchResult = search.searchFile(searchItem, columnIdentifier, this.csvState.getHasHeader());
       System.out.println(searchResult);
     }
 
