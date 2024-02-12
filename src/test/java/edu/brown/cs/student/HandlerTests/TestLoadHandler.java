@@ -97,4 +97,36 @@ public class TestLoadHandler {
     assertEquals("File outside data/ directory, please use file within data directory", result);
     clientConnection.disconnect();
   }
+  @Test
+  public void fileDNE() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/census/aslkdjfaklsdf.csv");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.LoadFileDNEFailureResponse response =
+        moshi
+            .adapter(LoadHandler.LoadFileDNEFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error();
+    assertEquals("File does not exist", result);
+    clientConnection.disconnect();
+  }
+  @Test
+  public void filepathEmpty() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.LoadFileEmptyFailureResponse response =
+        moshi
+            .adapter(LoadHandler.LoadFileEmptyFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error();
+    assertEquals("Filepath empty, please specify filepath", result);
+    clientConnection.disconnect();
+  }
 }
