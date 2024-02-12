@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.http.HttpRequest;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -68,24 +69,63 @@ public class TestLoadHandler {
   public void workingFile() throws IOException, URISyntaxException, InterruptedException {
     HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv");
     assertEquals(200, clientConnection.getResponseCode());
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.LoadSuccessResponse response =
+        moshi
+            .adapter(LoadHandler.LoadSuccessResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    String result = (String) response.responseMap().get("result");
+    assertEquals("load success", result);
+
+    clientConnection.disconnect();
+  }
+  @Test
+  public void fileOutsideDirectory() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=src/main/java/edu/brown/cs/student/main/Server/BroadbandHandler.java");
+    assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
-    System.out.println(clientConnection.getInputStream());
-    CSVState csvState = new CSVState();
+    LoadHandler.LoadFileOutsideDirectoryFailureResponse response =
+        moshi
+            .adapter(LoadHandler.LoadFileOutsideDirectoryFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-    HttpRequest loadRequest =
-        HttpRequest.newBuilder()
-            .uri(new URI("http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv"))
-            .GET()
-            .build();
+    assert response != null;
+    String result = response.error();
+    assertEquals("File outside data/ directory, please use file within data directory", result);
+    clientConnection.disconnect();
+  }
+  @Test
+  public void fileDNE() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/census/aslkdjfaklsdf.csv");
+    assertEquals(200, clientConnection.getResponseCode());
 
-    //    Object response =
-    //        moshi
-    //            .adapter((Type) LoadHandler.responseMap)
-    //            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.LoadFileDNEFailureResponse response =
+        moshi
+            .adapter(LoadHandler.LoadFileDNEFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-    //    System.out.println("response" + response);
+    assert response != null;
+    String result = response.error();
+    assertEquals("File does not exist", result);
+    clientConnection.disconnect();
 
+  }
+  @Test
+  public void filepathEmpty() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.LoadFileEmptyFailureResponse response =
+        moshi
+            .adapter(LoadHandler.LoadFileEmptyFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error();
+    assertEquals("Filepath empty, please specify filepath", result);
     clientConnection.disconnect();
   }
 }
