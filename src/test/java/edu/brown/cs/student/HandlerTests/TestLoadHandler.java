@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
@@ -70,25 +71,30 @@ public class TestLoadHandler {
   public void workingFile() throws IOException, URISyntaxException, InterruptedException {
     HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv");
     assertEquals(200, clientConnection.getResponseCode());
-
     Moshi moshi = new Moshi.Builder().build();
-    System.out.println(clientConnection.getInputStream());
-    CSVState csvState = new CSVState();
-
-    HttpRequest loadRequest =
-        HttpRequest.newBuilder()
-            .uri(new URI("http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv"))
-            .GET()
-            .build();
-
-    Object response =
+    LoadHandler.LoadSuccessResponse response =
         moshi
-            .adapter((Type) LoadHandler.responseMap)
+            .adapter(LoadHandler.LoadSuccessResponse.class)
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-
-    System.out.println("response" + response);
+    String result = (String) response.responseMap().get("result");
+    assertEquals("load success", result);
 
     clientConnection.disconnect();
+  }
+  @Test
+  public void fileOutsideDirectory() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=src/main/java/edu/brown/cs/student/main/Server/BroadbandHandler.java");
+    assertEquals(200, clientConnection.getResponseCode());
 
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.LoadFileOutsideDirectoryFailureResponse response =
+        moshi
+            .adapter(LoadHandler.LoadFileOutsideDirectoryFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error();
+    assertEquals("File outside data/ directory, please use file within data directory", result);
+    clientConnection.disconnect();
   }
 }
