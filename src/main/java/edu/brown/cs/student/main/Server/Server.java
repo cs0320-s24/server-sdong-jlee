@@ -18,7 +18,9 @@ public class Server {
 
     CSVState csvState = new CSVState();
     Spark.get("loadcsv", new LoadHandler(csvState));
+    Spark.get("viewcsv", new ViewHandler(csvState));
     Spark.get("searchcsv", new SearchHandler(csvState));
+
 
     Spark.init();
     Spark.awaitInitialization();
@@ -27,6 +29,7 @@ public class Server {
     System.out.println("Server started at http://localhost:" + port);
   }
 }
-
+// /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
+// /searchcsv?columnIdentifier=City/Town&searchItem=Bristol
 // http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/
 // http://localhost:3232/searchcsv?hasHeader=true&searchItem=Barrington
