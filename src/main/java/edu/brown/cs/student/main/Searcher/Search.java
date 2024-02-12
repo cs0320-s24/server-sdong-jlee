@@ -57,7 +57,7 @@ public class Search {
   public List<String> searchFile(String searchItem) throws IOException, FactoryFailureException {
     List<String> returnList = new ArrayList<>();
     Boolean containsVal = false;
-//
+
 //    if (!this.fileName.contains(
 //        "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/data/")) {
 //      System.err.println("Error: unable to read file: " + this.fileName);

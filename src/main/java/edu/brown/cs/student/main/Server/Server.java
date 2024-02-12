@@ -2,7 +2,6 @@ package edu.brown.cs.student.main.Server;
 
 import static spark.Spark.after;
 
-import edu.brown.cs.student.main.Searcher.Search;
 import spark.Spark;
 
 public class Server {
@@ -30,6 +29,7 @@ public class Server {
     System.out.println("Server started at http://localhost:" + port);
   }
 }
-
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
 // /searchcsv?columnIdentifier=City/Town&searchItem=Bristol
+// http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/
+// http://localhost:3232/searchcsv?hasHeader=true&searchItem=Barrington

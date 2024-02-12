@@ -72,6 +72,7 @@ public class SearchHandler implements Route {
     return new SearchSuccessResponse(responseMap).serialize();
   }
 
+
   /** Response object to send, when search is successful */
   public record SearchSuccessResponse(String response_type, Map<String, Object> responseMap) {
     public SearchSuccessResponse(Map<String, Object> responseMap) {
@@ -101,6 +102,7 @@ public class SearchHandler implements Route {
       return moshi.adapter(SearchNoMatchFailureResponse.class).toJson(this);
     }
   }
+
 
   /** Response object to send, when a file has not been loaded before searching */
   public record FileNotLoadedResponse(String error) {
