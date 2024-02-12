@@ -26,15 +26,13 @@ public class SearchHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
     Set<String> params = request.queryParams();
-    System.out.println(params);
-
     String hasHeaderString = request.queryParams("hasHeader");
-    System.out.println(hasHeaderString);
-
     String columnIdentifier = request.queryParams("columnIdentifier");
-    System.out.println(columnIdentifier);
-
     String searchItem = request.queryParams("searchItem");
+
+    System.out.println(params);
+    System.out.println(hasHeaderString);
+    System.out.println(columnIdentifier);
     System.out.println(searchItem);
 
     // Creates a hashmap to store the results of the request
@@ -42,10 +40,8 @@ public class SearchHandler implements Route {
 
     // Check that file is loaded
     if (this.csvState.fileNameIsEmpty()) {
-      responseMap.put("result", "Exception: must load a csv file to search");
-      return responseMap;
+      return new FileNotLoadedResponse().serialize();
     }
-    System.out.println("got here 2" );
 
     switch (hasHeaderString) {
       case "true":
@@ -61,20 +57,20 @@ public class SearchHandler implements Route {
         responseMap.put("result", "Exception: Invalid input. Input true or false");
         return responseMap;
     }
+
     StringCreator stringCreator = new StringCreator();
     String file = this.csvState.getFileName();
 
+    FileReader freader = null;
     try {
-      //      restrict to only data folder
-      FileReader freader = new FileReader("data/" + file);
+      freader = new FileReader("data/" + file);
     } catch (Exception e) {
-      //TODO make a better print
-      System.err.println("Error: Unable to read file: " + file);
+      return new UnableToReadFile().serialize();
     }
-    FileReader freader = new FileReader("data/" + file);
+
     CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.hasHeader);
     Search search = new Search(stringCreator, parser, file);
-    List<String> searchResult = new ArrayList<>();
+    List<String> searchResult;
 
     if (columnIdentifier == null) {
       searchResult = search.searchFile(searchItem);
@@ -84,51 +80,69 @@ public class SearchHandler implements Route {
       System.out.println(searchResult);
     }
 
-    // if no match
+    // No matches found
     if (searchResult.contains("Unable to find: '" + searchItem + "' in file")) {
       return new SearchNoMatchFailureResponse().serialize();
     }
+
+    // Successful search
     responseMap.put("success", searchResult);
     System.out.println(searchResult);
     return new SearchSuccessResponse(responseMap).serialize();
   }
 
-  /** Response object to send, containing a soup with certain ingredients in it */
+  /** Response object to send, when search is successful */
   public record SearchSuccessResponse(String response_type, Map<String, Object> responseMap) {
     public SearchSuccessResponse(Map<String, Object> responseMap) {
       this("success", responseMap);
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       try {
-        // Initialize Moshi which takes in this class and returns it as JSON!
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<SearchSuccessResponse> adapter = moshi.adapter(SearchSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
-        // For debugging purposes, show in the console _why_ this fails
-        // Otherwise we'll just get an error 500 from the API in integration
-        // testing.
         e.printStackTrace();
         throw e;
       }
     }
   }
 
-  /** Response object to send if someone requested soup from an empty Menu */
+  /** Response object to send, when search fails to find a match */
   public record SearchNoMatchFailureResponse(String error) {
     public SearchNoMatchFailureResponse() {
       this("no match found in file");
     }
-
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(SearchNoMatchFailureResponse.class).toJson(this);
     }
   }
+
+  /** Response object to send, when a file has not been loaded before searching */
+  public record FileNotLoadedResponse(String error) {
+    public FileNotLoadedResponse() {
+      this("Exception: must load a csv file to search");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
+    }
+  }
+
+  /** Response object to send, when a file cannot be read */
+  public record UnableToReadFile(String error) {
+    public UnableToReadFile() {
+      this("Error: Unable to read file");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(UnableToReadFile.class).toJson(this);
+    }
+  }
+
 }
