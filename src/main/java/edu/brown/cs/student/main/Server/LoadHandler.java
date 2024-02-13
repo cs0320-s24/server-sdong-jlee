@@ -26,9 +26,6 @@ public class LoadHandler implements Route {
     String filepath = request.queryParams("filepath");
     String hasHeaderString = request.queryParams("hasHeader");
 
-    System.out.println(params);
-    System.out.println(filepath);
-    System.out.println(hasHeaderString);
     // need this check at top to ensure we don't get error code 500
     if (hasHeaderString == null) {
       return new NoHasHeaderInput().serialize();
@@ -69,14 +66,12 @@ public class LoadHandler implements Route {
     filepath = filepath.substring(5);
     this.csvState.setFileName(filepath);
     responseMap.put("result", "load success");
-    System.out.println("filepath: " + filepath);
-    return new LoadSuccessResponse(responseMap).serialize();
-
+    return new LoadSuccessResponse(filepath, responseMap).serialize();
   }
 
-  public record LoadSuccessResponse(String response_type, Map<String, Object> responseMap) {
-    public LoadSuccessResponse(Map<String, Object> responseMap) {
-      this("success", responseMap);
+  public record LoadSuccessResponse(String response_type, String filepath, Map<String, Object> responseMap) {
+    public LoadSuccessResponse(String filepath, Map<String, Object> responseMap) {
+      this("success", filepath, responseMap);
     }
     /** @return this response, serialized as Json */
     String serialize() {
