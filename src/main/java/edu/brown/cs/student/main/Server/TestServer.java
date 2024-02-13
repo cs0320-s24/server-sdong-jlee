@@ -17,7 +17,8 @@ public class TestServer {
 
     CSVState csvState = new CSVState();
     Spark.get("loadcsv", new LoadHandler(csvState));
-    //        Spark.get("activity", new ActivityHandler());
+    Spark.get("viewcsv", new ViewHandler(csvState));
+    Spark.get("searchcsv", new SearchHandler(csvState));
 
     Spark.init();
     Spark.awaitInitialization();

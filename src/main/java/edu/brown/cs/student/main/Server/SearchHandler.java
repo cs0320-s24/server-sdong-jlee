@@ -43,12 +43,8 @@ public class SearchHandler implements Route {
     StringCreator stringCreator = new StringCreator();
     String file = this.csvState.getFileName();
 
-    FileReader freader = null;
-    try {
-      freader = new FileReader("data/" + file);
-    } catch (Exception e) {
-      return new UnableToReadFile().serialize();
-    }
+    // Check that filepath is valid in LoadHandler
+    FileReader freader = new FileReader("data/" + file);
 
     CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
     Search search = new Search(stringCreator, parser, file);
@@ -119,18 +115,6 @@ public class SearchHandler implements Route {
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
-    }
-  }
-  //TODO: is this necessary here?
-  /** Response object to send, when a file cannot be read */
-  public record UnableToReadFile(String result) {
-    public UnableToReadFile() {
-      this(" error_datasource");
-    }
-    /** @return this response, serialized as Json */
-    String serialize() {
-      Moshi moshi = new Moshi.Builder().build();
-      return moshi.adapter(UnableToReadFile.class).toJson(this);
     }
   }
 
