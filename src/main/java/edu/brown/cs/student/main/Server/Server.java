@@ -6,7 +6,9 @@ import spark.Spark;
 
 public class Server {
 
-  public static void main(String[] args) {
+  // constructor
+    // params - fake/mocked class, actual retrieval process class, cache or no cache (specified in main),
+  public Server() {
     int port = 3232;
     Spark.port(port);
 
@@ -20,6 +22,7 @@ public class Server {
     Spark.get("loadcsv", new LoadHandler(csvState));
     Spark.get("viewcsv", new ViewHandler(csvState));
     Spark.get("searchcsv", new SearchHandler(csvState));
+    //when we make a broadband handler we pass in optional cache or no cache
 
 
     Spark.init();
@@ -27,6 +30,12 @@ public class Server {
 
     // Notice this link alone leads to a 404... Why is that?
     System.out.println("Server started at http://localhost:" + port);
+  }
+
+
+
+  public static void main(String[] args) {
+
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
