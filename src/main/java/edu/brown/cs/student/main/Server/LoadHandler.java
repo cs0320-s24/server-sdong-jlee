@@ -29,6 +29,10 @@ public class LoadHandler implements Route {
     System.out.println(params);
     System.out.println(filepath);
     System.out.println(hasHeaderString);
+    // need this check at top to ensure we don't get error code 500
+    if (hasHeaderString == null) {
+      return new NoHasHeaderInput().serialize();
+    }
 
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
@@ -88,7 +92,7 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record LoadFileDNEFailureResponse(String error) {
+  public record LoadFileDNEFailureResponse(String error_datasource) {
     public LoadFileDNEFailureResponse() {
       this("File does not exist");
     }
@@ -100,7 +104,7 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record LoadFileEmptyFailureResponse(String error) {
+  public record LoadFileEmptyFailureResponse(String error_bad_request) {
     public LoadFileEmptyFailureResponse() {
       this("Filepath empty, please specify filepath");
     }
@@ -112,7 +116,7 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record LoadFileOutsideDirectoryFailureResponse(String error) {
+  public record LoadFileOutsideDirectoryFailureResponse(String error_datasource) {
     public LoadFileOutsideDirectoryFailureResponse() {
       this("File outside data/ directory, please use file within data directory");
     }
@@ -123,7 +127,7 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record NoHasHeaderInput(String error) {
+  public record NoHasHeaderInput(String error_bad_request) {
     public NoHasHeaderInput() {
       this("Exception: No value for hasHeader");
     }
@@ -134,7 +138,7 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record InvalidHasHeaderInput(String error) {
+  public record InvalidHasHeaderInput(String error_bad_request) {
     public InvalidHasHeaderInput() {
       this("Exception: Invalid input. Input true or false");
     }
