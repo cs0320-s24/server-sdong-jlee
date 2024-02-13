@@ -14,6 +14,8 @@ import spark.Route;
 
 public class LoadHandler implements Route {
   private CSVState csvState;
+  private static String hasHeaderString;
+  private static String filepath;
 
   public LoadHandler(CSVState csvState) {
     this.csvState = csvState;
@@ -23,8 +25,8 @@ public class LoadHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     Set<String> params = request.queryParams();
-    String filepath = request.queryParams("filepath");
-    String hasHeaderString = request.queryParams("hasHeader");
+    filepath = request.queryParams("filepath");
+    hasHeaderString = request.queryParams("hasHeader");
 
     // need this check at top to ensure we don't get error code 500
     if (hasHeaderString == null) {
@@ -35,18 +37,15 @@ public class LoadHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
 
     if (filepath.isEmpty()) {
-      System.out.println("filepath empty");
       return new LoadFileEmptyFailureResponse().serialize();
     }
 
     File f = new File(filepath);
     if (!f.exists()) {
-      System.out.println("file DNE");
       return new LoadFileDNEFailureResponse().serialize();
     }
 
     if (!filepath.startsWith("data/")) {
-      System.out.println("outside direct");
       return new LoadFileOutsideDirectoryFailureResponse().serialize();
     }
 
@@ -89,7 +88,7 @@ public class LoadHandler implements Route {
 
   public record LoadFileDNEFailureResponse(String result) {
     public LoadFileDNEFailureResponse() {
-      this("error_datasource");
+      this("error_datasource: " + filepath + " does not exist");
     }
 
     /** @return this response, serialized as Json */
@@ -101,7 +100,7 @@ public class LoadHandler implements Route {
 
   public record LoadFileEmptyFailureResponse(String result ) {
     public LoadFileEmptyFailureResponse() {
-      this("error_bad_request");
+      this("error_bad_request: file path parameter empty");
     }
 
     /** @return this response, serialized as Json */
@@ -124,7 +123,7 @@ public class LoadHandler implements Route {
 
   public record NoHasHeaderInput(String result) {
     public NoHasHeaderInput() {
-      this("error_bad_request");
+      this("error_bad_request: hasHeader parameter empty");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -135,7 +134,7 @@ public class LoadHandler implements Route {
 
   public record InvalidHasHeaderInput(String result) {
     public InvalidHasHeaderInput() {
-      this("error_bad_request");
+      this("error_bad_request: " + "'"+hasHeaderString+"'" + " not equal to true or false");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -145,7 +144,7 @@ public class LoadHandler implements Route {
   }
   public record noHasHeaderInputParam(String result) {
     public noHasHeaderInputParam() {
-      this("error_bad_request");
+      this("error_bad_request: loadcsv endpoint requires a hasHeader parameter");
     }
     /** @return this response, serialized as Json */
     String serialize() {

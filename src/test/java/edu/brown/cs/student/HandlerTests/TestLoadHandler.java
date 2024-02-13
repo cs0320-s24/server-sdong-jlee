@@ -110,7 +110,7 @@ public class TestLoadHandler {
 
     assert response != null;
     String result = response.result();
-    assertEquals("error_datasource", result);
+    assertEquals("error_datasource: data/census/aslkdjfaklsdf.csv does not exist", result);
     clientConnection.disconnect();
 
   }
@@ -127,7 +127,7 @@ public class TestLoadHandler {
 
     assert response != null;
     String result = response.result();
-    assertEquals("error_bad_request", result);
+    assertEquals("error_bad_request: file path parameter empty", result);
     clientConnection.disconnect();
   }
 
@@ -144,7 +144,7 @@ public class TestLoadHandler {
 
     assert response != null;
     String result = response.result();
-    assertEquals("error_bad_request", result);
+    assertEquals("error_bad_request: hasHeader parameter empty", result);
     clientConnection.disconnect();
   }
   @Test
@@ -160,7 +160,7 @@ public class TestLoadHandler {
 
     assert response != null;
     String result = response.result();
-    assertEquals("error_bad_request", result);
+    assertEquals("error_bad_request: 'TRUE' not equal to true or false", result);
     clientConnection.disconnect();
   }
   @Test
@@ -176,7 +176,7 @@ public class TestLoadHandler {
 
     assert response != null;
     String result = response.result();
-    assertEquals("error_bad_request", result);
+    assertEquals("error_bad_request: loadcsv endpoint requires a hasHeader parameter", result);
     clientConnection.disconnect();
   }
 
