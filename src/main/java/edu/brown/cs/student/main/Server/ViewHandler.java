@@ -71,14 +71,13 @@ public class ViewHandler implements Route {
       curList.add(row);
       viewResult.add(curList);
     }
-    responseMap.put("View Result: ", viewResult);
-    return new ViewSuccessResponse(responseMap).serialize();
+    return new ViewSuccessResponse(viewResult).serialize();
   }
 
   /** Response object to send, when view is successful */
-  public record ViewSuccessResponse(String response_type, Map<String, Object> responseMap) {
-    public ViewSuccessResponse(Map<String, Object> responseMap) {
-      this("success", responseMap);
+  public record ViewSuccessResponse(String response_type, List<List<String>> data) {
+    public ViewSuccessResponse(List<List<String>> data) {
+      this("success", data);
     }
 
     /** @return this response, serialized as Json */
