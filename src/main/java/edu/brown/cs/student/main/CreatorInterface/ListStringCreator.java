@@ -1,8 +1,13 @@
 package edu.brown.cs.student.main.CreatorInterface;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ListStringCreator implements CreatorFromRow<List<String>>{
+
+  static final Pattern regexSplitCSVRow =
+      Pattern.compile(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*(?![^\\\"]*\\\"))");
+
 
   @Override
   public List<String> create(List<String> row) throws FactoryFailureException {
@@ -14,6 +19,14 @@ public class ListStringCreator implements CreatorFromRow<List<String>>{
 
   @Override
   public Boolean iterate(String row, String searchItem) {
-    return null;
+    // split result into what regex splits into
+    String[] result = regexSplitCSVRow.split(row);
+    // loop through individual strings in row to see if search exists
+    for (String s : result) {
+      if (s.equals(searchItem)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

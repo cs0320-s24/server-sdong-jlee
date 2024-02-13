@@ -6,6 +6,7 @@ import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.Parse.CSVParser;
 import edu.brown.cs.student.main.Searcher.Search;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,11 +54,20 @@ public class SearchHandler implements Route {
     Search search = new Search(stringCreator, parser, file);
     List<String> searchResult;
 
+
     if (columnIdentifier == null) {
       searchResult = search.searchFile(searchItem);
     } else {
       searchResult = search.searchFile(searchItem, columnIdentifier, this.csvState.getHasHeader());
       returnParams.add(columnIdentifier);
+    }
+
+    List<List<String>> resSearch = new ArrayList<>();
+
+    for (String row : searchResult) {
+      List<String> curList = new ArrayList<>();
+      curList.add(row);
+      resSearch.add(curList);
     }
 
     // No matches found
@@ -67,13 +77,13 @@ public class SearchHandler implements Route {
 
     // Successful search
     responseMap.put("Matching Rows", searchResult);
-    return new SearchSuccessResponse(returnParams, responseMap).serialize();
+    return new SearchSuccessResponse(returnParams, resSearch).serialize();
   }
 
   /** Response object to send, when search is successful */
-  public record SearchSuccessResponse(String result, Set<String> parameters, Map<String, Object> responseMap) {
-    public SearchSuccessResponse(Set<String> params, Map<String, Object> responseMap) {
-      this("success", params, responseMap);
+  public record SearchSuccessResponse(String result, Set<String> parameters, List<List<String>> data) {
+    public SearchSuccessResponse(Set<String> params, List<List<String>> resSearch) {
+      this("success", params, resSearch);
     }
     /** @return this response, serialized as Json */
     String serialize() {
