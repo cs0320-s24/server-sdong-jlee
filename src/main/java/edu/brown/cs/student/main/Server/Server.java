@@ -31,5 +31,5 @@ public class Server {
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
 // /searchcsv?columnIdentifier=City/Town&searchItem=Bristol
-// http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/
+// http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/&hasHeader=true
 // http://localhost:3232/searchcsv?hasHeader=true&searchItem=Barrington
