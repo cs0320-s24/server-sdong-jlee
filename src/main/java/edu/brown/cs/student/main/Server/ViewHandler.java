@@ -1,5 +1,9 @@
 package edu.brown.cs.student.main.Server;
 
+import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.CreatorInterface.StringCreator;
+import edu.brown.cs.student.main.Parse.CSVParser;
+import edu.brown.cs.student.main.Searcher.Search;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -15,6 +19,12 @@ import java.util.ArrayList;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import java.io.FileReader;
 import java.util.HashMap;
@@ -41,6 +51,7 @@ public class ViewHandler implements Route {
     if (this.csvState.fileNameIsEmpty()) {
       return new FileNotLoadedResponse().serialize();
     }
+
 
     StringCreator stringCreator = new StringCreator();
     String file = this.csvState.getFileName();
@@ -89,7 +100,6 @@ public class ViewHandler implements Route {
       }
     }
   }
-
   /** Response object to send, when a file has not been loaded before searching */
   public record FileNotLoadedResponse(String error) {
     public FileNotLoadedResponse() {
@@ -97,10 +107,10 @@ public class ViewHandler implements Route {
     }
     /** @return this response, serialized as Json */
     String serialize() {
-      Moshi moshi = new Builder().build();
+      Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
     }
   }
-
 }
+
 
