@@ -28,7 +28,7 @@ public class LoadHandler implements Route {
 
     // need this check at top to ensure we don't get error code 500
     if (hasHeaderString == null) {
-      return new NoHasHeaderInput().serialize();
+      return new noHasHeaderInputParam().serialize();
     }
 
     // Creates a hashmap to store the results of the request
@@ -141,6 +141,16 @@ public class LoadHandler implements Route {
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.InvalidHasHeaderInput.class).toJson(this);
+    }
+  }
+  public record noHasHeaderInputParam(String error_bad_request) {
+    public noHasHeaderInputParam() {
+      this("Exception: no hasHeader param, please add");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(LoadHandler.noHasHeaderInputParam.class).toJson(this);
     }
   }
 }

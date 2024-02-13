@@ -68,7 +68,7 @@ public class TestLoadHandler {
 
   @Test
   public void workingFile() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv");
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
     LoadHandler.LoadSuccessResponse response =
@@ -82,7 +82,7 @@ public class TestLoadHandler {
   }
   @Test
   public void fileOutsideDirectory() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=src/main/java/edu/brown/cs/student/main/Server/BroadbandHandler.java");
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=src/main/java/edu/brown/cs/student/main/Server/BroadbandHandler.java&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -92,13 +92,13 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error();
+    String result = response.error_datasource();
     assertEquals("File outside data/ directory, please use file within data directory", result);
     clientConnection.disconnect();
   }
   @Test
   public void fileDNE() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/census/aslkdjfaklsdf.csv");
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/census/aslkdjfaklsdf.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -108,14 +108,14 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error();
+    String result = response.error_datasource();
     assertEquals("File does not exist", result);
     clientConnection.disconnect();
 
   }
   @Test
   public void filepathEmpty() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=");
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -125,8 +125,58 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error();
+    String result = response.error_bad_request();
     assertEquals("Filepath empty, please specify filepath", result);
     clientConnection.disconnect();
   }
+
+  @Test
+  public void emptyHeaderParam() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.NoHasHeaderInput response =
+        moshi
+            .adapter(LoadHandler.NoHasHeaderInput.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error_bad_request();
+    assertEquals("Exception: No value for hasHeader", result);
+    clientConnection.disconnect();
+  }
+  @Test
+  public void invalidHeaderParam() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=TRUE");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.InvalidHasHeaderInput response =
+        moshi
+            .adapter(LoadHandler.InvalidHasHeaderInput.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error_bad_request();
+    assertEquals("Exception: Invalid input. Input true or false", result);
+    clientConnection.disconnect();
+  }
+  @Test
+  public void noHeaderParam() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadHandler.NoHasHeaderInput response =
+        moshi
+            .adapter(LoadHandler.NoHasHeaderInput.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert response != null;
+    String result = response.error_bad_request();
+    assertEquals("Exception: no hasHeader param, please add", result);
+    clientConnection.disconnect();
+  }
+
 }
