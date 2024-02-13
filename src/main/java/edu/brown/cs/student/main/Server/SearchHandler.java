@@ -31,10 +31,6 @@ public class SearchHandler implements Route {
     Set<String> returnParams = new HashSet<>();
     returnParams.add(searchItem);
 
-    System.out.println(params);
-    System.out.println(columnIdentifier);
-    System.out.println(searchItem);
-
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
 
@@ -59,11 +55,9 @@ public class SearchHandler implements Route {
 
     if (columnIdentifier == null) {
       searchResult = search.searchFile(searchItem);
-      System.out.println(searchResult);
     } else {
       searchResult = search.searchFile(searchItem, columnIdentifier, this.csvState.getHasHeader());
       returnParams.add(columnIdentifier);
-      System.out.println(searchResult);
     }
 
     // No matches found
@@ -72,14 +66,12 @@ public class SearchHandler implements Route {
     }
 
     // Successful search
-    responseMap.put("success", searchResult);
-    System.out.println(searchResult);
+    responseMap.put("Matching Rows", searchResult);
     return new SearchSuccessResponse(returnParams, responseMap).serialize();
   }
 
-
   /** Response object to send, when search is successful */
-  public record SearchSuccessResponse(String response_type, Set<String> parameters, Map<String, Object> responseMap) {
+  public record SearchSuccessResponse(String result, Set<String> parameters, Map<String, Object> responseMap) {
     public SearchSuccessResponse(Set<String> params, Map<String, Object> responseMap) {
       this("success", params, responseMap);
     }
@@ -97,9 +89,9 @@ public class SearchHandler implements Route {
   }
 
   /** Response object to send, when search fails to find a match */
-  public record SearchNoMatchFailureResponse(String error_no_match) {
+  public record SearchNoMatchFailureResponse(String result) {
     public SearchNoMatchFailureResponse() {
-      this("no match found in file");
+      this("error_no_match");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -109,9 +101,9 @@ public class SearchHandler implements Route {
   }
 
   /** Response object to send, when a file has not been loaded before searching */
-  public record FileNotLoadedResponse(String error_bad_request) {
+  public record FileNotLoadedResponse(String result) {
     public FileNotLoadedResponse() {
-      this("Exception: must load a csv file to search");
+      this("error_bad_request");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -121,9 +113,9 @@ public class SearchHandler implements Route {
   }
   //TODO: is this necessary here?
   /** Response object to send, when a file cannot be read */
-  public record UnableToReadFile(String error_datasource) {
+  public record UnableToReadFile(String result) {
     public UnableToReadFile() {
-      this("Error: Unable to read file");
+      this(" error_datasource");
     }
     /** @return this response, serialized as Json */
     String serialize() {

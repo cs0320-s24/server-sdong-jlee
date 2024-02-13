@@ -66,12 +66,12 @@ public class LoadHandler implements Route {
     filepath = filepath.substring(5);
     this.csvState.setFileName(filepath);
     responseMap.put("result", "load success");
-    return new LoadSuccessResponse(filepath, responseMap).serialize();
+    return new LoadSuccessResponse(filepath).serialize();
   }
 
-  public record LoadSuccessResponse(String response_type, String filepath, Map<String, Object> responseMap) {
-    public LoadSuccessResponse(String filepath, Map<String, Object> responseMap) {
-      this("success", filepath, responseMap);
+  public record LoadSuccessResponse(String result, String filepath) {
+    public LoadSuccessResponse(String filepath) {
+      this("success", filepath);
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -87,9 +87,9 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record LoadFileDNEFailureResponse(String error_datasource) {
+  public record LoadFileDNEFailureResponse(String result) {
     public LoadFileDNEFailureResponse() {
-      this("File does not exist");
+      this("error_datasource");
     }
 
     /** @return this response, serialized as Json */
@@ -99,9 +99,9 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record LoadFileEmptyFailureResponse(String error_bad_request) {
+  public record LoadFileEmptyFailureResponse(String result ) {
     public LoadFileEmptyFailureResponse() {
-      this("Filepath empty, please specify filepath");
+      this("error_bad_request");
     }
 
     /** @return this response, serialized as Json */
@@ -111,9 +111,9 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record LoadFileOutsideDirectoryFailureResponse(String error_datasource) {
+  public record LoadFileOutsideDirectoryFailureResponse(String result) {
     public LoadFileOutsideDirectoryFailureResponse() {
-      this("File outside data/ directory, please use file within data directory");
+      this("error_datasource");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -122,9 +122,9 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record NoHasHeaderInput(String error_bad_request) {
+  public record NoHasHeaderInput(String result) {
     public NoHasHeaderInput() {
-      this("Exception: No value for hasHeader");
+      this("error_bad_request");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -133,9 +133,9 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record InvalidHasHeaderInput(String error_bad_request) {
+  public record InvalidHasHeaderInput(String result) {
     public InvalidHasHeaderInput() {
-      this("Exception: Invalid input. Input true or false");
+      this("error_bad_request");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -143,9 +143,9 @@ public class LoadHandler implements Route {
       return moshi.adapter(LoadHandler.InvalidHasHeaderInput.class).toJson(this);
     }
   }
-  public record noHasHeaderInputParam(String error_bad_request) {
+  public record noHasHeaderInputParam(String result) {
     public noHasHeaderInputParam() {
-      this("Exception: no hasHeader param, please add");
+      this("error_bad_request");
     }
     /** @return this response, serialized as Json */
     String serialize() {
