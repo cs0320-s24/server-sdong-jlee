@@ -52,7 +52,6 @@ public class ViewHandler implements Route {
       return new FileNotLoadedResponse().serialize();
     }
 
-
     StringCreator stringCreator = new StringCreator();
     String file = this.csvState.getFileName();
 
@@ -62,12 +61,10 @@ public class ViewHandler implements Route {
     } catch (Exception e) {
       return new UnableToReadFile().serialize();
     }
-
     CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
-    List<List<String>> viewResult = new ArrayList<>();
-
     List<String> parsedFile = parser.parseCSV();
-
+    // to add to response map
+    List<List<String>> viewResult = new ArrayList<>();
 
     for (String row : parsedFile) {
       List<String> curList = new ArrayList<>();
@@ -76,9 +73,6 @@ public class ViewHandler implements Route {
     }
     responseMap.put("View Result: ", viewResult);
     return new ViewSuccessResponse(responseMap).serialize();
-
-    // viewcsv, which sends back the entire CSV file's contents as a Json 2-dimensional array.
-    // parse into list of list<String>
   }
 
   /** Response object to send, when view is successful */
@@ -109,6 +103,18 @@ public class ViewHandler implements Route {
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
+    }
+  }
+
+  /** Response object to send, when a file cannot be read */
+  public record UnableToReadFile(String error) {
+    public UnableToReadFile() {
+      this("Error: Unable to read file");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(ViewHandler.UnableToReadFile.class).toJson(this);
     }
   }
 }
