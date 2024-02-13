@@ -7,6 +7,7 @@ import edu.brown.cs.student.main.Parse.CSVParser;
 import edu.brown.cs.student.main.Searcher.Search;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,9 @@ public class SearchHandler implements Route {
     Set<String> params = request.queryParams();
     String columnIdentifier = request.queryParams("columnIdentifier");
     String searchItem = request.queryParams("searchItem");
+
+    Set<String> returnParams = new HashSet<>();
+    returnParams.add(searchItem);
 
     System.out.println(params);
     System.out.println(columnIdentifier);
@@ -58,6 +62,7 @@ public class SearchHandler implements Route {
       System.out.println(searchResult);
     } else {
       searchResult = search.searchFile(searchItem, columnIdentifier, this.csvState.getHasHeader());
+      returnParams.add(columnIdentifier);
       System.out.println(searchResult);
     }
 
@@ -69,14 +74,14 @@ public class SearchHandler implements Route {
     // Successful search
     responseMap.put("success", searchResult);
     System.out.println(searchResult);
-    return new SearchSuccessResponse(responseMap).serialize();
+    return new SearchSuccessResponse(returnParams, responseMap).serialize();
   }
 
 
   /** Response object to send, when search is successful */
-  public record SearchSuccessResponse(String response_type, Map<String, Object> responseMap) {
-    public SearchSuccessResponse(Map<String, Object> responseMap) {
-      this("success", responseMap);
+  public record SearchSuccessResponse(String response_type, Set<String> parameters, Map<String, Object> responseMap) {
+    public SearchSuccessResponse(Set<String> params, Map<String, Object> responseMap) {
+      this("success", params, responseMap);
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -92,7 +97,7 @@ public class SearchHandler implements Route {
   }
 
   /** Response object to send, when search fails to find a match */
-  public record SearchNoMatchFailureResponse(String error) {
+  public record SearchNoMatchFailureResponse(String error_no_match) {
     public SearchNoMatchFailureResponse() {
       this("no match found in file");
     }
@@ -104,7 +109,7 @@ public class SearchHandler implements Route {
   }
 
   /** Response object to send, when a file has not been loaded before searching */
-  public record FileNotLoadedResponse(String error) {
+  public record FileNotLoadedResponse(String error_bad_request) {
     public FileNotLoadedResponse() {
       this("Exception: must load a csv file to search");
     }
@@ -114,9 +119,9 @@ public class SearchHandler implements Route {
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
     }
   }
-
+  //TODO: is this necessary here?
   /** Response object to send, when a file cannot be read */
-  public record UnableToReadFile(String error) {
+  public record UnableToReadFile(String error_datasource) {
     public UnableToReadFile() {
       this("Error: Unable to read file");
     }
