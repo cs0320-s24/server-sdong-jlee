@@ -33,6 +33,7 @@ public class CSVParser<T> {
   /** boolean to determine if CSV contains a header */
   Boolean hasHeader;
 
+
   /**
    * CSVParser constructor, sets header to "" to determine later
    *
@@ -72,6 +73,7 @@ public class CSVParser<T> {
       String[] result = regexSplitCSVRow.split(line);
       // create T object from list of strings (one line) to add to return result and if not possible
       // throw error
+
       try {
         lines.add(this.rowObject.create(List.of(result)));
       } catch (Exception e) {
