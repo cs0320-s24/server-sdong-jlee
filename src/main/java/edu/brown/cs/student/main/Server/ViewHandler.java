@@ -94,9 +94,9 @@ public class ViewHandler implements Route {
     }
   }
   /** Response object to send, when a file has not been loaded before searching */
-  public record FileNotLoadedResponse(String error) {
+  public record FileNotLoadedResponse(String result) {
     public FileNotLoadedResponse() {
-      this("Exception: must load a csv file to search");
+      this("error_bad_request: file must be loaded before viewing");
     }
     /** @return this response, serialized as Json */
     String serialize() {
@@ -106,9 +106,9 @@ public class ViewHandler implements Route {
   }
 
   /** Response object to send, when a file cannot be read */
-  public record UnableToReadFile(String error) {
+  public record UnableToReadFile(String result) {
     public UnableToReadFile() {
-      this("Error: Unable to read file");
+      this("error_datasource: unable to read file");
     }
     /** @return this response, serialized as Json */
     String serialize() {
