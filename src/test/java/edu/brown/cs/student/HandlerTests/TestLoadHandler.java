@@ -75,8 +75,9 @@ public class TestLoadHandler {
         moshi
             .adapter(LoadHandler.LoadSuccessResponse.class)
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    String result = (String) response.responseMap().get("result");
-    assertEquals("load success", result);
+    assert response != null;
+    String result = response.result();
+    assertEquals("success", result);
 
     clientConnection.disconnect();
   }
@@ -92,8 +93,8 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error_datasource();
-    assertEquals("File outside data/ directory, please use file within data directory", result);
+    String result = response.result();
+    assertEquals("error_datasource", result);
     clientConnection.disconnect();
   }
   @Test
@@ -108,8 +109,8 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error_datasource();
-    assertEquals("File does not exist", result);
+    String result = response.result();
+    assertEquals("error_datasource", result);
     clientConnection.disconnect();
 
   }
@@ -125,8 +126,8 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error_bad_request();
-    assertEquals("Filepath empty, please specify filepath", result);
+    String result = response.result();
+    assertEquals("error_bad_request", result);
     clientConnection.disconnect();
   }
 
@@ -142,8 +143,8 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error_bad_request();
-    assertEquals("Exception: No value for hasHeader", result);
+    String result = response.result();
+    assertEquals("error_bad_request", result);
     clientConnection.disconnect();
   }
   @Test
@@ -158,8 +159,8 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error_bad_request();
-    assertEquals("Exception: Invalid input. Input true or false", result);
+    String result = response.result();
+    assertEquals("error_bad_request", result);
     clientConnection.disconnect();
   }
   @Test
@@ -174,8 +175,8 @@ public class TestLoadHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     assert response != null;
-    String result = response.error_bad_request();
-    assertEquals("Exception: no hasHeader param, please add", result);
+    String result = response.result();
+    assertEquals("error_bad_request", result);
     clientConnection.disconnect();
   }
 
