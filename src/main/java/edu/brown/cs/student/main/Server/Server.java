@@ -24,7 +24,6 @@ public class Server {
     Spark.get("searchcsv", new SearchHandler(csvState));
     //when we make a broadband handler we pass in optional cache or no cache
 
-
     Spark.init();
     Spark.awaitInitialization();
 
@@ -35,6 +34,7 @@ public class Server {
 
 
   public static void main(String[] args) {
+    Server server = new Server();
 
   }
 }
