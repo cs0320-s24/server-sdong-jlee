@@ -1,5 +1,9 @@
 package edu.brown.cs.student.main.ACS;
 
-public class ACSDatasource {
+public interface ACSDatasource {
+
+
+
+   ACSData getPercentageBBAccess();
 
 }
