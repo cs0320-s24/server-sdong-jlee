@@ -3,9 +3,12 @@ package edu.brown.cs.student.main.Server;
 import static spark.Spark.connect;
 
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.ACS.DatasourceException;
 import edu.brown.cs.student.main.Cache.ACSProxy;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,18 +47,19 @@ public class BroadbandHandler implements Route {
   private static HashMap<String, String> getStateCodes() throws IOException, DatasourceException {
     URL requestURL = new URL("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*");
     HttpURLConnection clientConnection = connect(requestURL);
+
+
     Moshi moshi = new Moshi.Builder().build();
     System.out.println("got here 0");
-    JsonAdapter<StateCodeResponse> adapter = moshi.adapter(StateCodeResponse.class).nonNull();
-    System.out.println("got here 1");
+    //JsonAdapter<StateCodeResponse> adapter = moshi.adapter(StateCodeResponse.class).nonNull();
+    JsonAdapter<Object> adapter = moshi.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class))).nonNull();
+
+
     try {
-      StateCodeResponse stateCodeList = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-      System.out.println("got here 2");
+      List<List<String>> stateCodeList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
       System.out.println(stateCodeList); // records are nice for giving auto toString
-    } catch (IOException e) {
-      e.printStackTrace(); // Print out any IOExceptions
     } catch (Exception e) {
-      e.printStackTrace(); // Print out any other exceptions
+      e.printStackTrace();
     }
 
     //System.out.println(stateCodeList); // records are nice for giving auto toString
