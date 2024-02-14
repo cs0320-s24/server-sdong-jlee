@@ -6,6 +6,8 @@ import edu.brown.cs.student.main.ACS.ACSDatasource;
 import edu.brown.cs.student.main.Cache.ACSProxy;
 import spark.Spark;
 
+import java.util.Optional;
+
 public class Server {
 
   // constructor
