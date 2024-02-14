@@ -27,10 +27,11 @@ import java.util.*;
 
 public class BroadbandHandler implements Route {
 
+  HashMap<String, String> stateCodesMap;
+
   public BroadbandHandler() {
 
   }
-
 
   private static HttpURLConnection connect(URL requestURL)
       throws DatasourceException, IOException {
@@ -44,23 +45,16 @@ public class BroadbandHandler implements Route {
     return clientConnection;
   }
 
-  private static HashMap<String, String> getStateCodes() throws IOException, DatasourceException {
+  private HashMap<String, String> getStateCodes() throws IOException, DatasourceException {
     URL requestURL = new URL("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*");
     HttpURLConnection clientConnection = connect(requestURL);
-
 
     Moshi moshi = new Moshi.Builder().build();
     System.out.println("got here 0");
     //JsonAdapter<StateCodeResponse> adapter = moshi.adapter(StateCodeResponse.class).nonNull();
     JsonAdapter<Object> adapter = moshi.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class))).nonNull();
 
-
-    try {
-      List<List<String>> stateCodeList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-      System.out.println(stateCodeList); // records are nice for giving auto toString
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    List<List<String>> stateCodeList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
     //System.out.println(stateCodeList); // records are nice for giving auto toString
 
@@ -73,16 +67,17 @@ public class BroadbandHandler implements Route {
 
     HashMap<String, String> stateCodesMap = new HashMap<>();
 
-//    assert stateCodeList != null;
-//    for (List<String> row: stateCodeList.stateCodes()) {
-//      String state = row.get(0);
-//      String code = row.get(1);
-//
-//      if (state.equals("NAME")) {
-//        continue;
-//      }
-//      stateCodesMap.put(state, code);
-//    }
+    assert stateCodeList != null;
+    for (List<String> row: stateCodeList) {
+      String state = row.get(0);
+      String code = row.get(1);
+
+      if (state.equals("NAME")) {
+        continue;
+      }
+      stateCodesMap.put(state, code);
+    }
+    this.stateCodesMap = stateCodesMap;
     return stateCodesMap;
   }
 
