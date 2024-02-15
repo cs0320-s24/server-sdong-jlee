@@ -4,7 +4,10 @@ import static spark.Spark.after;
 
 import edu.brown.cs.student.main.ACS.ACSData;
 import edu.brown.cs.student.main.ACS.ACSDatasource;
+import edu.brown.cs.student.main.ACS.DatasourceException;
 import edu.brown.cs.student.main.ACS.MockedACSAPISource;
+import edu.brown.cs.student.main.ACS.RealACSAPISource;
+import java.io.IOException;
 import spark.Spark;
 
 import java.util.Optional;
@@ -13,7 +16,8 @@ public class Server {
 
   // constructor
     // TODO params - fake data class, actual retrieval process class, cache or no cache (specified in main),
-  public Server(CSVState csvState, ACSDatasource datasource) {
+  public Server(CSVState csvState, ACSDatasource datasource)
+      throws DatasourceException, IOException {
     int port = 3232;
     Spark.port(port);
 
@@ -26,7 +30,7 @@ public class Server {
     Spark.get("loadcsv", new LoadHandler(csvState));
     Spark.get("viewcsv", new ViewHandler(csvState));
     Spark.get("searchcsv", new SearchHandler(csvState));
-    Spark.get("broadband", new BroadbandHandler());
+    Spark.get("broadband", new BroadbandHandler(datasource));
 
     Spark.init();
     Spark.awaitInitialization();
@@ -35,9 +39,9 @@ public class Server {
     System.out.println("Server started at http://localhost:" + port);
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws DatasourceException, IOException {
     CSVState csvState = new CSVState();
-    Server server = new Server(csvState, new MockedACSAPISource(new ACSData("test")));
+    Server server = new Server(csvState, new MockedACSAPISource(new ACSData("23")));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
