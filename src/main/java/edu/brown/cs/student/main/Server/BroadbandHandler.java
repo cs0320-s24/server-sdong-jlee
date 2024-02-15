@@ -89,10 +89,7 @@ public class BroadbandHandler implements Route {
     return null;
   }
 
-  public record StateCodeResponse(List<List<String>> stateCodes) {
-
-
-  }
+  public record StateCodeResponse(List<List<String>> stateCodes) {}
 
 
 }
