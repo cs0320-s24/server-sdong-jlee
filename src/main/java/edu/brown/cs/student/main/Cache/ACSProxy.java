@@ -20,22 +20,22 @@ public class ACSProxy implements ACSDatasource {
   private ACSDatasource acsDatasource;
   private final LoadingCache<List<String>, ACSData> cache;
   //TODO add user parameters to constructor
-  public ACSProxy(ACSDatasource acsDatasource) {
+  public ACSProxy(ACSDatasource acsDatasource, Integer expirationTime) {
 
     this.acsDatasource = acsDatasource;
 
-    this.cache = CacheBuilder.newBuilder().maximumSize(10)
+    this.cache = CacheBuilder.newBuilder()
+        .maximumSize(10)
         // How long should entries remain in the cache?
-        .expireAfterWrite(1, TimeUnit.MINUTES)
+        .expireAfterWrite(expirationTime, TimeUnit.MINUTES)
+
         // Keep statistical info around for profiling purposes
         .recordStats()
         .build(
-            // Strategy pattern: how should the cache behave when
-            // it's asked for something it doesn't have?
             new CacheLoader<>() {
               @NotNull
               public ACSData load(@NotNull List<String> stateAndCountyCode)
-                  throws DatasourceException, IOException, ExecutionException {
+                throws DatasourceException, IOException, ExecutionException {
                 String stateCode = stateAndCountyCode.get(0);
                 String countyCode = stateAndCountyCode.get(1);
 
@@ -52,6 +52,5 @@ public class ACSProxy implements ACSDatasource {
     List<String> stateAndCountyCode = new ArrayList<>(Arrays.asList(stateCode, countyCode));
     System.out.println(stateAndCountyCode);
     return cache.get(stateAndCountyCode);
-
   }
 }

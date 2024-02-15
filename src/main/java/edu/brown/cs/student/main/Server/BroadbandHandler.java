@@ -18,7 +18,11 @@ import okio.Buffer;
 import java.net.URLConnection;
 import java.util.*;
 
-
+/**
+ * A handler class for the broadband endpoint. Takes in an ACSDatasource to use for getting broadband percentages.
+ * Makes a request to the ACS API to populate a stateCodesMap and makes an additional query to find the corresponding
+ * county code to a user provided county.
+ */
 public class BroadbandHandler implements Route {
   private final ACSDatasource datasource;
   HashMap<String, String> stateCodesMap;
@@ -54,7 +58,7 @@ public class BroadbandHandler implements Route {
     String stateCode = this.stateCodesMap.get(state);
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
     try {
-      ACSData percentage = datasource.getPercentageBBAccess(stateCode, countyCode);
+      ACSData percentage = this.datasource.getPercentageBBAccess(stateCode, countyCode);
       responseMap.put("parameters", List.of(county, state));
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       //TODO check if this is right way to add date and time
@@ -81,6 +85,11 @@ public class BroadbandHandler implements Route {
     return clientConnection;
   }
 
+  /**
+   * Method for populating stateCodesMap. Calls the ACS API and populates a map from String state : String code
+   * @throws IOException
+   * @throws DatasourceException
+   */
   private void getStateCodes() throws IOException, DatasourceException {
     URL requestURL = new URL("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*");
     HttpURLConnection clientConnection = connect(requestURL);
@@ -110,8 +119,17 @@ public class BroadbandHandler implements Route {
     this.stateCodesMap = stateCodesMap;
   }
 
+  //    countyName must be in format "county name, state name" ??????
+
+  /**
+   * Method where given a user inputted county name, it queries the ACS API and finds the corresponding county code.
+   * @param stateCode
+   * @param countyName
+   * @return county code - the String representation of a county code
+   * @throws IOException
+   * @throws DatasourceException
+   */
   private String getCountyCode(String stateCode, String countyName) throws IOException, DatasourceException {
-//    countyName must be in format "county name, state name"
     URL requestURL = new URL("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*&in=state:" + stateCode);
     HttpURLConnection clientConnection = connect(requestURL);
 
