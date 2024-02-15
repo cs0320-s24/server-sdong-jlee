@@ -1,20 +1,57 @@
 package edu.brown.cs.student.main.Cache;
 
-import edu.brown.cs.student.main.Server.BroadbandHandler;
-import spark.Request;
-import spark.Response;
-import spark.Route;
+import edu.brown.cs.student.main.ACS.ACSData;
+import edu.brown.cs.student.main.ACS.ACSDatasource;
+import edu.brown.cs.student.main.ACS.DatasourceException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
-public class ACSProxy implements Route {
+public class ACSProxy implements ACSDatasource {
 
-  private BroadbandHandler broadbandHandler;
+  private ACSDatasource acsDatasource;
+  private final LoadingCache<List<String>, ACSData> cache;
   //TODO add user parameters to constructor
-  public ACSProxy(BroadbandHandler broadbandHandler) {
-    this.broadbandHandler = broadbandHandler;
+  public ACSProxy(ACSDatasource acsDatasource) {
+
+    this.acsDatasource = acsDatasource;
+
+    this.cache = CacheBuilder.newBuilder().maximumSize(10)
+        // How long should entries remain in the cache?
+        .expireAfterWrite(1, TimeUnit.MINUTES)
+        // Keep statistical info around for profiling purposes
+        .recordStats()
+        .build(
+            // Strategy pattern: how should the cache behave when
+            // it's asked for something it doesn't have?
+            new CacheLoader<>() {
+              @NotNull
+              public ACSData load(@NotNull List<String> stateAndCountyCode)
+                  throws DatasourceException, IOException, ExecutionException {
+                String stateCode = stateAndCountyCode.get(0);
+                String countyCode = stateAndCountyCode.get(1);
+
+                System.out.println("called load for: "+stateCode + countyCode);
+                // If this isn't yet present in the cache, load it:
+                return acsDatasource.getPercentageBBAccess(stateCode, countyCode);
+              }
+            });
   }
 
   @Override
-  public Object handle(Request request, Response response) throws Exception {
-    return null;
+  public ACSData getPercentageBBAccess(String stateCode, String countyCode)
+      throws IOException, DatasourceException, ExecutionException {
+    List<String> stateAndCountyCode = new ArrayList<>(Arrays.asList(stateCode, countyCode));
+    System.out.println(stateAndCountyCode);
+    return cache.get(stateAndCountyCode);
+
   }
 }

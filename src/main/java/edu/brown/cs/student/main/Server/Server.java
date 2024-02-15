@@ -7,6 +7,7 @@ import edu.brown.cs.student.main.ACS.ACSDatasource;
 import edu.brown.cs.student.main.ACS.DatasourceException;
 import edu.brown.cs.student.main.ACS.MockedACSAPISource;
 import edu.brown.cs.student.main.ACS.RealACSAPISource;
+import edu.brown.cs.student.main.Cache.ACSProxy;
 import java.io.IOException;
 import spark.Spark;
 
@@ -39,7 +40,7 @@ public class Server {
 
   public static void main(String[] args) throws DatasourceException, IOException {
     CSVState csvState = new CSVState();
-    Server server = new Server(csvState, new MockedACSAPISource(new ACSData("23")));
+    Server server = new Server(csvState, new ACSProxy(new MockedACSAPISource(new ACSData("23"))));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
