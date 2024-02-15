@@ -98,6 +98,7 @@ public class TestBroadbandHandler {
     System.out.println(result);
     //assertEquals("error_bad_request: missing either county param, state param, or both", result);
     clientConnection.disconnect();
+
   }
 
   @Test
