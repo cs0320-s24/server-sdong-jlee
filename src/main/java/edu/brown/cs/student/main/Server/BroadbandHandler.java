@@ -21,7 +21,7 @@ import java.util.*;
 
 public class BroadbandHandler implements Route {
   private final ACSDatasource datasource;
-  HashMap<String, String> stateCodesMap;
+  private HashMap<String, String> stateCodesMap;
   private static String county;
   private static String state;
 
@@ -34,6 +34,9 @@ public class BroadbandHandler implements Route {
     Set<String> params = request.queryParams();
     county = request.queryParams("county");
     state = request.queryParams("state");
+
+
+    // Populate map of state : code
     if (this.stateCodesMap == null) {
       getStateCodes();
     }
@@ -50,6 +53,7 @@ public class BroadbandHandler implements Route {
     // TODO add more checks for proper formatting of inputs like capital words etc, also how to deal with spaces for county?
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
+
     // gets state and county codes to pass into the datasource get percentage broadband access
     String stateCode = this.stateCodesMap.get(state);
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
@@ -69,6 +73,24 @@ public class BroadbandHandler implements Route {
     return null;
   }
 
+    // Gets state and county codes to pass into the datasource get percentage broadband access
+    String stateCode = this.stateCodesMap.get(state);
+    String countyCode = this.getCountyCode(stateCode, county + ", " + state);
+    try {
+      ACSData percentage = datasource.getPercentageBBAccess(stateCode, countyCode);
+      responseMap.put("parameters", List.of(county, state));
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      //TODO check if this is right way to add date and time
+      Date date = new Date();
+      String dateTime = dateFormat.format(date);
+      responseMap.put("date/time", dateTime);
+      responseMap.put("Broadband Percentage", percentage);
+      return new BroadbandSuccessResponse(responseMap).serialize();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
   private static HttpURLConnection connect(URL requestURL)
       throws DatasourceException, IOException {
     URLConnection urlConnection = requestURL.openConnection();
@@ -109,6 +131,7 @@ public class BroadbandHandler implements Route {
     }
     this.stateCodesMap = stateCodesMap;
   }
+
 
   private String getCountyCode(String stateCode, String countyName) throws IOException, DatasourceException {
 //    countyName must be in format "county name, state name"
