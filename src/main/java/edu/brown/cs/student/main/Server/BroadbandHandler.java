@@ -38,7 +38,7 @@ public class BroadbandHandler implements Route {
       getStateCodes();
     }
 
-    if (county == null || state == null) {
+    if (county == null || state == null || county.isEmpty() || state.isEmpty()) {
      // return new noHasHeaderInputParam().serialize();
       return new missingInputParam().serialize();
     }
