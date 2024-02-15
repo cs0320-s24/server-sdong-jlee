@@ -24,7 +24,7 @@ public class TestSearchHandler {
         // Set the Spark port number. This can only be done once, and has to
         // happen before any route maps are added. Hence using @BeforeClass.
         // Setting port 0 will cause Spark to use an arbitrary available port.
-        TestServer testServer = new TestServer();
+        MockServer testServer = new MockServer();
         // Spark.port(0);
         Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
     }

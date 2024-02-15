@@ -12,6 +12,11 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * A handler class for the loadcsv endpoint. Takes in two parameters, filepath - a filepath starting with "data/", and
+ * hasHeader - an argument to searchFile in the Search class.Attempts to update the CSVState with the user-provided CSV
+ * filename. Then, in preparation for viewcsv and searchcsv endpoints, the handler also sets the CSVState hasHeader field.
+ */
 public class LoadHandler implements Route {
   private CSVState csvState;
   private static String hasHeaderString;
@@ -30,7 +35,7 @@ public class LoadHandler implements Route {
 
     // need this check at top to ensure we don't get error code 500
     if (hasHeaderString == null) {
-      return new noHasHeaderInputParam().serialize();
+      return new NoHasHeaderInput().serialize();
     }
 
     // Creates a hashmap to store the results of the request
@@ -62,6 +67,7 @@ public class LoadHandler implements Route {
         return new InvalidHasHeaderInput().serialize();
     }
 
+    // Loads the filepath without "data/" included
     filepath = filepath.substring(5);
     this.csvState.setFileName(filepath);
     responseMap.put("result", "load success");
@@ -86,6 +92,7 @@ public class LoadHandler implements Route {
     }
   }
 
+  /** Response object to send, when filepath does not exist */
   public record LoadFileDNEFailureResponse(String result) {
     public LoadFileDNEFailureResponse() {
       this("error_datasource: " + filepath + " does not exist");
@@ -98,6 +105,7 @@ public class LoadHandler implements Route {
     }
   }
 
+  /** Response object to send, when no filepath is provided */
   public record LoadFileEmptyFailureResponse(String result ) {
     public LoadFileEmptyFailureResponse() {
       this("error_bad_request: file path parameter empty");
@@ -110,6 +118,7 @@ public class LoadHandler implements Route {
     }
   }
 
+  /** Response object to send, when file to load is outside the /data directory */
   public record LoadFileOutsideDirectoryFailureResponse(String result) {
     public LoadFileOutsideDirectoryFailureResponse() {
       this("error_datasource");
@@ -121,17 +130,7 @@ public class LoadHandler implements Route {
     }
   }
 
-  public record NoHasHeaderInput(String result) {
-    public NoHasHeaderInput() {
-      this("error_bad_request: hasHeader parameter empty");
-    }
-    /** @return this response, serialized as Json */
-    String serialize() {
-      Moshi moshi = new Moshi.Builder().build();
-      return moshi.adapter(LoadHandler.NoHasHeaderInput.class).toJson(this);
-    }
-  }
-
+  /** Response object to send, when hasHeader parameter is not true or false */
   public record InvalidHasHeaderInput(String result) {
     public InvalidHasHeaderInput() {
       this("error_bad_request: " + "'"+hasHeaderString+"'" + " not equal to true or false");
@@ -142,14 +141,16 @@ public class LoadHandler implements Route {
       return moshi.adapter(LoadHandler.InvalidHasHeaderInput.class).toJson(this);
     }
   }
-  public record noHasHeaderInputParam(String result) {
-    public noHasHeaderInputParam() {
+
+  /** Response object to send, when a no hasHeader parameter is entered */
+  public record NoHasHeaderInput(String result) {
+    public NoHasHeaderInput() {
       this("error_bad_request: loadcsv endpoint requires a hasHeader parameter");
     }
     /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
-      return moshi.adapter(LoadHandler.noHasHeaderInputParam.class).toJson(this);
+      return moshi.adapter(LoadHandler.NoHasHeaderInput.class).toJson(this);
     }
   }
 }

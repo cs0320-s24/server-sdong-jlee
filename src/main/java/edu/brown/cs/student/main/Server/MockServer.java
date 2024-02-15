@@ -4,7 +4,10 @@ import static spark.Spark.after;
 
 import spark.Spark;
 
-public class TestServer {
+/**
+ * Class identical to Server class. Used for testing.
+ */
+public class MockServer {
   public static void main(String[] args) {
     int port = 3232;
     Spark.port(port);

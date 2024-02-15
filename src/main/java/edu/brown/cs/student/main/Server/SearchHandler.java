@@ -16,6 +16,11 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * A handler class for the searchcsv endpoint which queries two paramaters, columnIdentifier and search Item which
+ * are arguments to the searcFile method outlined in Search. Uses the Search class to search an already loaded CSV
+ * and sends back a response of matching values as a List<List<String>>.
+ */
 public class SearchHandler implements Route {
   private CSVState csvState;
 
