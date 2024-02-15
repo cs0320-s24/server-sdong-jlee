@@ -114,6 +114,7 @@ public class TestBroadbandHandler {
     System.out.println(result);
     assertEquals("error_bad_request: ensure capitalization's on kings County or California", result);
     clientConnection.disconnect();
+
   }
 
 }
