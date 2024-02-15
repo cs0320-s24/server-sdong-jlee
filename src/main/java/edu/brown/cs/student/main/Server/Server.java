@@ -9,6 +9,9 @@ import edu.brown.cs.student.main.ACS.MockedACSAPISource;
 import edu.brown.cs.student.main.ACS.RealACSAPISource;
 import edu.brown.cs.student.main.Cache.ACSProxy;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import spark.Spark;
 
 /**
@@ -43,7 +46,17 @@ public class Server {
 
   public static void main(String[] args) throws DatasourceException, IOException {
     CSVState csvState = new CSVState();
-    Server server = new Server(csvState, new ACSProxy(new MockedACSAPISource(new ACSData("23")), 1));
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date();
+    String dateTime = dateFormat.format(date);
+
+    ACSData acsData = new ACSData("23", dateTime);
+
+    ACSDatasource mocked = new MockedACSAPISource(acsData);
+    ACSDatasource real = new RealACSAPISource();
+
+    Server server = new Server(csvState, new ACSProxy(mocked, 1));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true

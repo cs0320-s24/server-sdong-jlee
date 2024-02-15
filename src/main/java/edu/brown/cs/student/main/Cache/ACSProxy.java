@@ -4,10 +4,8 @@ import edu.brown.cs.student.main.ACS.ACSData;
 import edu.brown.cs.student.main.ACS.ACSDatasource;
 import edu.brown.cs.student.main.ACS.DatasourceException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +43,7 @@ public class ACSProxy implements ACSDatasource {
               }
             });
   }
+
 
   @Override
   public ACSData getPercentageBBAccess(String stateCode, String countyCode)

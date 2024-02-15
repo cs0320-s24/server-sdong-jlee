@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import okio.Buffer;
@@ -25,6 +27,7 @@ public class RealACSAPISource implements ACSDatasource{
       throw new DatasourceException("unexpected: API connection not success status "+clientConnection.getResponseMessage());
     return clientConnection;
   }
+
 
   @Override
   public ACSData getPercentageBBAccess(String stateCode, String countyCode)
@@ -44,9 +47,13 @@ public class RealACSAPISource implements ACSDatasource{
 
     clientConnection.disconnect();
     // Validity checks for response
-    if(broadBandAccessList == null)
-      throw new DatasourceException("Malformed response from ACSAPI");
+    if(broadBandAccessList == null) { throw new DatasourceException("Malformed response from ACSAPI"); }
 
-    return new ACSData(broadBandAccessList.get(1).get(1));
+    // Get the Date/Time data is retrieved
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date();
+    String dateTime = dateFormat.format(date);
+
+    return new ACSData(broadBandAccessList.get(1).get(1), dateTime);
   }
 }

@@ -59,14 +59,17 @@ public class BroadbandHandler implements Route {
     String stateCode = this.stateCodesMap.get(state);
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
     try {
-      ACSData percentage = this.datasource.getPercentageBBAccess(stateCode, countyCode);
+      ACSData acsData = this.datasource.getPercentageBBAccess(stateCode, countyCode);
       responseMap.put("parameters", List.of(county, state));
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      //TODO check if this is right way to add date and time
-      Date date = new Date();
-      String dateTime = dateFormat.format(date);
-      responseMap.put("date/time", dateTime);
-      responseMap.put("Broadband Percentage", percentage);
+//
+//      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//      //TODO check if this is right way to add date and time
+//      Date date = new Date();
+//      String dateTime = dateFormat.format(date);
+//      responseMap.put("date/time", dateTime);
+
+      responseMap.put("Broadband Percentage", acsData);
+
       return new BroadbandSuccessResponse(responseMap).serialize();
     } catch (Exception e) {
       e.printStackTrace();
@@ -115,6 +118,10 @@ public class BroadbandHandler implements Route {
       }
       stateCodesMap.put(state, code);
     }
+
+    // TODO when there's a search for county that doesn't exist
+//    if stateCodesMap.isEmpty() {}
+
     this.stateCodesMap = stateCodesMap;
   }
 
