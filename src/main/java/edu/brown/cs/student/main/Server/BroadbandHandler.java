@@ -1,7 +1,5 @@
 package edu.brown.cs.student.main.Server;
-
 import static spark.Spark.connect;
-
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.ACS.ACSData;
@@ -10,6 +8,7 @@ import edu.brown.cs.student.main.ACS.DatasourceException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import spark.Request;
 import spark.Response;
@@ -19,9 +18,9 @@ import okio.Buffer;
 import java.net.URLConnection;
 import java.util.*;
 
+
 public class BroadbandHandler implements Route {
   private final ACSDatasource datasource;
-
   HashMap<String, String> stateCodesMap;
   private static String county;
   private static String state;
@@ -41,27 +40,32 @@ public class BroadbandHandler implements Route {
 
     if (county == null || state == null) {
      // return new noHasHeaderInputParam().serialize();
-      return null; // change to right error
+      return new missingInputParam().serialize();
     }
+
+    if (!Character.isUpperCase(county.charAt(0)) || !Character.isUpperCase(state.charAt(0))) {
+      return new invalidInputParam().serialize();
+    }
+
     // TODO add more checks for proper formatting of inputs like capital words etc, also how to deal with spaces for county?
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
-    // add parameter of date and time we call acs api to response map
-
+    // gets state and county codes to pass into the datasource get percentage broadband access
     String stateCode = this.stateCodesMap.get(state);
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
-
     try {
       ACSData percentage = datasource.getPercentageBBAccess(stateCode, countyCode);
-      responseMap.put("result", "success");
-      responseMap.put("parameters", params);
+      responseMap.put("parameters", List.of(county, state));
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      //TODO check if this is right way to add date and time
+      Date date = new Date();
+      String dateTime = dateFormat.format(date);
+      responseMap.put("date/time", dateTime);
       responseMap.put("Broadband Percentage", percentage);
       return new BroadbandSuccessResponse(responseMap).serialize();
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-
     return null;
   }
 
@@ -82,19 +86,14 @@ public class BroadbandHandler implements Route {
     HttpURLConnection clientConnection = connect(requestURL);
 
     Moshi moshi = new Moshi.Builder().build();
-    //JsonAdapter<StateCodeResponse> adapter = moshi.adapter(StateCodeResponse.class).nonNull();
+
     JsonAdapter<Object> adapter = moshi.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class))).nonNull();
-
     List<List<String>> stateCodeList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-
-    //System.out.println(stateCodeList); // records are nice for giving auto toString
 
     clientConnection.disconnect();
     // Validity checks for response
-//    if(body == null || body.properties() == null || body.properties().temperature() == null)
-//      throw new DatasourceException("Malformed response from NWS");
-//    if(body.properties().temperature().values().isEmpty())
-//      throw new DatasourceException("Could not obtain temperature data from NWS");
+    if(stateCodeList == null)
+      throw new DatasourceException("Malformed response from ACS");
 
     HashMap<String, String> stateCodesMap = new HashMap<>();
 
@@ -156,5 +155,24 @@ public class BroadbandHandler implements Route {
     }
   }
 
-
+  public record missingInputParam(String result) {
+    public missingInputParam() {
+      this("error_bad_request: missing either county param, state param, or both");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(BroadbandHandler.missingInputParam.class).toJson(this);
+    }
+  }
+  public record invalidInputParam(String result) {
+    public invalidInputParam() {
+      this("error_bad_request: ensure capitalization's on " + county + " or " + state);
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(BroadbandHandler.invalidInputParam.class).toJson(this);
+    }
+  }
 }

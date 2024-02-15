@@ -44,12 +44,9 @@ public class RealACSAPISource implements ACSDatasource{
 
     clientConnection.disconnect();
     // Validity checks for response
-//    if(body == null || body.properties() == null || body.properties().temperature() == null)
-//      throw new DatasourceException("Malformed response from NWS");
-//    if(body.properties().temperature().values().isEmpty())
-//      throw new DatasourceException("Could not obtain temperature data from NWS");
+    if(broadBandAccessList == null)
+      throw new DatasourceException("Malformed response from ACSAPI");
 
-    assert broadBandAccessList != null;
     return new ACSData(broadBandAccessList.get(1).get(1));
   }
 }
