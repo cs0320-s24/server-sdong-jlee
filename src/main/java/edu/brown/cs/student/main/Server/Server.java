@@ -39,7 +39,7 @@ public class Server {
 
   public static void main(String[] args) throws DatasourceException, IOException {
     CSVState csvState = new CSVState();
-    Server server = new Server(csvState, new RealACSAPISource());
+    Server server = new Server(csvState, new MockedACSAPISource(new ACSData("23")));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
