@@ -32,6 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A handler class for the viewcsv endpoint. Returns an entire CSV as List<List<String>> that has been loaded
+ * through the loadcsv endpoint.
+ */
 public class ViewHandler implements Route {
   private CSVState csvState;
 

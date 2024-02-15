@@ -2,15 +2,12 @@ package edu.brown.cs.student.HandlerTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.beust.ah.A;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.ACS.ACSData;
 import edu.brown.cs.student.main.ACS.DatasourceException;
 import edu.brown.cs.student.main.ACS.MockedACSAPISource;
 import edu.brown.cs.student.main.Server.BroadbandHandler;
-import edu.brown.cs.student.main.Server.CSVState;
-import edu.brown.cs.student.main.Server.LoadHandler;
-import edu.brown.cs.student.main.Server.TestServer;
+import edu.brown.cs.student.main.Server.MockServer;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
@@ -30,7 +27,7 @@ public class TestBroadbandHandler {
     // Set the Spark port number. This can only be done once, and has to
     // happen before any route maps are added. Hence using @BeforeClass.
     // Setting port 0 will cause Spark to use an arbitrary available port.
-    TestServer testServer = new TestServer();
+    MockServer testServer = new MockServer();
     // Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }

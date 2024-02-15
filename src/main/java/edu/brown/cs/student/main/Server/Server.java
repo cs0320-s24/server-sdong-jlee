@@ -11,6 +11,9 @@ import edu.brown.cs.student.main.Cache.ACSProxy;
 import java.io.IOException;
 import spark.Spark;
 
+/**
+ * Class representing a server. Begin the server by running this class and navigating to the desired endpoints.
+ */
 public class Server {
 
   // constructor
@@ -47,6 +50,5 @@ public class Server {
 // /searchcsv?columnIdentifier=City/Town&searchItem=Bristol
 // http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/&hasHeader=true
 // http://localhost:3232/searchcsv?hasHeader=true&searchItem=Barrington
-
 
 // date/time, javdoc, testing, readne

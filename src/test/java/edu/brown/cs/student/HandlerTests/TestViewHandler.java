@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Server.CSVState;
 import edu.brown.cs.student.main.Server.LoadHandler;
-import edu.brown.cs.student.main.Server.TestServer;
+import edu.brown.cs.student.main.Server.MockServer;
 import edu.brown.cs.student.main.Server.ViewHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -27,7 +27,7 @@ public class TestViewHandler {
     // Set the Spark port number. This can only be done once, and has to
     // happen before any route maps are added. Hence using @BeforeClass.
     // Setting port 0 will cause Spark to use an arbitrary available port.
-    TestServer testServer = new TestServer();
+    MockServer testServer = new MockServer();
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
 

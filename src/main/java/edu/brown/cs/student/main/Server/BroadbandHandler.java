@@ -19,13 +19,14 @@ import java.net.URLConnection;
 import java.util.*;
 
 /**
- * A handler class for the broadband endpoint. Takes in an ACSDatasource to use for getting broadband percentages.
- * Makes a request to the ACS API to populate a stateCodesMap and makes an additional query to find the corresponding
- * county code to a user provided county.
+ * A handler class for the broadband endpoint which queries two parameters, county - a county name, state - a
+ * state name. The class takes in an ACSDatasource to use for getting broadband percentages.Makes a request to the ACS
+ * API to populate a stateCodesMap and makes an additional query to find the corresponding county code to a user
+ * provided county.
  */
 public class BroadbandHandler implements Route {
   private final ACSDatasource datasource;
-  HashMap<String, String> stateCodesMap;
+  private HashMap<String, String> stateCodesMap;
   private static String county;
   private static String state;
 
@@ -93,13 +94,11 @@ public class BroadbandHandler implements Route {
   private void getStateCodes() throws IOException, DatasourceException {
     URL requestURL = new URL("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*");
     HttpURLConnection clientConnection = connect(requestURL);
-
     Moshi moshi = new Moshi.Builder().build();
-
     JsonAdapter<Object> adapter = moshi.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class))).nonNull();
     List<List<String>> stateCodeList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-
     clientConnection.disconnect();
+
     // Validity checks for response
     if(stateCodeList == null)
       throw new DatasourceException("Malformed response from ACS");
@@ -132,9 +131,7 @@ public class BroadbandHandler implements Route {
   private String getCountyCode(String stateCode, String countyName) throws IOException, DatasourceException {
     URL requestURL = new URL("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*&in=state:" + stateCode);
     HttpURLConnection clientConnection = connect(requestURL);
-
     Moshi moshi = new Moshi.Builder().build();
-
     JsonAdapter<Object> adapter = moshi.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class))).nonNull();
 
     List<List<String>> countyCodesList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
@@ -151,10 +148,12 @@ public class BroadbandHandler implements Route {
         return countyCode;
       }
     }
-//    if we never find a matching county in the state
+
+    // if we never find a matching county in the state
     return null;
   }
 
+  /** Response object to send, when broadband percentage information is successfully retrieved from ACS API */
   public record BroadbandSuccessResponse(String result, Map<String, Object> resultMap) {
     public BroadbandSuccessResponse(Map<String, Object> resultMap) {
       this("success", resultMap);
@@ -173,6 +172,7 @@ public class BroadbandHandler implements Route {
     }
   }
 
+  /** Response object to send, when county or state parameter is empty */
   public record missingInputParam(String result) {
     public missingInputParam() {
       this("error_bad_request: missing either county param, state param, or both");
@@ -183,6 +183,8 @@ public class BroadbandHandler implements Route {
       return moshi.adapter(BroadbandHandler.missingInputParam.class).toJson(this);
     }
   }
+
+  /** Response object to send, when a county or state parameter is invalid */
   public record invalidInputParam(String result) {
     public invalidInputParam() {
       this("error_bad_request: ensure capitalization's on " + county + " or " + state);
