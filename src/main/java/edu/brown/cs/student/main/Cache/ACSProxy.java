@@ -16,14 +16,14 @@ import com.google.common.cache.LoadingCache;
 public class ACSProxy implements ACSDatasource {
 
   private ACSDatasource acsDatasource;
-  private final LoadingCache<List<String>, ACSData> cache;
+  public final LoadingCache<List<String>, ACSData> cache;
   //TODO add user parameters to constructor
-  public ACSProxy(ACSDatasource acsDatasource, Integer expirationTime) {
+  public ACSProxy(ACSDatasource acsDatasource, Integer maxSize, Integer expirationTime) {
 
     this.acsDatasource = acsDatasource;
 
     this.cache = CacheBuilder.newBuilder()
-        .maximumSize(10)
+        .maximumSize(maxSize)
         // How long should entries remain in the cache?
         .expireAfterWrite(expirationTime, TimeUnit.MINUTES)
 
@@ -36,9 +36,6 @@ public class ACSProxy implements ACSDatasource {
                 throws DatasourceException, IOException, ExecutionException {
                 String stateCode = stateAndCountyCode.get(0);
                 String countyCode = stateAndCountyCode.get(1);
-
-                System.out.println("called load for: "+stateCode + countyCode);
-                // If this isn't yet present in the cache, load it:
                 return acsDatasource.getPercentageBBAccess(stateCode, countyCode);
               }
             });
@@ -48,7 +45,6 @@ public class ACSProxy implements ACSDatasource {
   public ACSData getPercentageBBAccess(String stateCode, String countyCode)
       throws IOException, DatasourceException, ExecutionException {
     List<String> stateAndCountyCode = new ArrayList<>(Arrays.asList(stateCode, countyCode));
-    System.out.println(stateAndCountyCode);
     return cache.get(stateAndCountyCode);
   }
 

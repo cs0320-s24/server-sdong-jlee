@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
@@ -41,7 +43,8 @@ public class TestACSProxy {
     ACSData acsData = new ACSData("23");
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();
-    Spark.get("broadband", new BroadbandHandler(new ACSProxy(mocked, 1)));
+    ACSProxy proxy = new ACSProxy(mocked, 10, 1);
+    Spark.get("broadband", new BroadbandHandler(proxy));
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
@@ -99,13 +102,52 @@ public class TestACSProxy {
             .adapter(BroadbandHandler.BroadbandSuccessResponse.class)
             .fromJson(new Buffer().readFrom(clientConnectionCached.getInputStream()));
     assert responseCached != null;
-    String resultCached = response.result();
     Object broadbandPercentageObjectCached = responseCached.resultMap().get("Broadband Percentage");
     assertEquals("{percentage=23}", broadbandPercentageObjectCached.toString());
-
 
     clientConnection.disconnect();
     clientConnectionCached.disconnect();
   }
 
+  @Test
+  public void testCacheEviction()
+      throws IOException, URISyntaxException, InterruptedException, DatasourceException, ExecutionException {
+    ACSData acsData = new ACSData("23");
+    ACSDatasource mocked = new MockedACSAPISource(acsData);
+    ACSDatasource real = new RealACSAPISource();
+    ACSProxy proxy = new ACSProxy(mocked, 5, 1);
+    Spark.get("broadband", new BroadbandHandler(proxy));
+
+    for (int i = 0; i < 10; i++) {
+      proxy.getPercentageBBAccess("0" + i, "0" + i);
+    }
+    String state = "0";
+    String county = "0";
+
+    assertEquals(5, proxy.cache.size());
+    assertEquals(5, proxy.cache.stats().evictionCount());
+    System.out.println(proxy.cache.stats());
+  }
+
+  @Test
+  public void testCacheHits()
+      throws IOException, URISyntaxException, InterruptedException, DatasourceException, ExecutionException {
+    ACSData acsData = new ACSData("23");
+    ACSDatasource mocked = new MockedACSAPISource(acsData);
+    ACSDatasource real = new RealACSAPISource();
+    ACSProxy proxy = new ACSProxy(mocked, 5, 1);
+    Spark.get("broadband", new BroadbandHandler(proxy));
+
+    for (int i = 0; i < 5; i++) {
+      proxy.getPercentageBBAccess("0" + i, "0" + i);
+    }
+    for (int i = 0; i < 5; i++) {
+      proxy.getPercentageBBAccess("0" + i, "0" + i);
+    }
+    String state = "0";
+    String county = "0";
+    System.out.println(proxy.cache.stats());
+    assertEquals(5, proxy.cache.stats().hitCount());
+    assertEquals(5, proxy.cache.stats().missCount());
+  }
 }
