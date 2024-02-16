@@ -12,22 +12,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 
-public class ACSProxy implements ACSDatasource {
+/**
+ * A proxy class that allows for caching of API responses from the ACS API. The class uses google guava cache and allows
+ * users to specify cache maxSize and the expirationTime for cached items. Developers may modify this class.
+ */
 
+public class ACSProxy implements ACSDatasource {
   private ACSDatasource acsDatasource;
   public final LoadingCache<List<String>, ACSData> cache;
-  // TODO add user parameters to constructor
+
   public ACSProxy(ACSDatasource acsDatasource, Integer maxSize, Integer expirationTime) {
-
     this.acsDatasource = acsDatasource;
-
     this.cache =
         CacheBuilder.newBuilder()
             .maximumSize(maxSize)
-            // How long should entries remain in the cache?
             .expireAfterWrite(expirationTime, TimeUnit.MINUTES)
-
-            // Keep statistical info around for profiling purposes
             .recordStats()
             .build(
                 new CacheLoader<>() {

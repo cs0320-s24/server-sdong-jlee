@@ -12,8 +12,10 @@ import java.util.Date;
 import java.util.List;
 import okio.Buffer;
 
+/**
+ * Real data source for accessing the ACS API.
+ */
 public class RealACSAPISource implements ACSDatasource {
-
   static String dateTime;
 
   private static HttpURLConnection connect(URL requestURL) throws DatasourceException, IOException {
@@ -58,8 +60,7 @@ public class RealACSAPISource implements ACSDatasource {
     if (broadBandAccessList == null) {
       throw new DatasourceException("Malformed response from ACSAPI");
     }
-    // TODO check if this is right way to add date and time
-    // Get the Date/Time data is retrieved
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Date date = new Date();
     dateTime = dateFormat.format(date);

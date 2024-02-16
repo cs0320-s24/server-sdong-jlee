@@ -18,10 +18,6 @@ import spark.Spark;
  * endpoints.
  */
 public class Server {
-
-  // constructor
-  // TODO params - fake data class, actual retrieval process class, cache or no cache (specified in
-  // main),
   public Server(CSVState csvState, ACSDatasource datasource)
       throws DatasourceException, IOException {
     int port = 3232;
@@ -37,11 +33,9 @@ public class Server {
     Spark.get("viewcsv", new ViewHandler(csvState));
     Spark.get("searchcsv", new SearchHandler(csvState));
     Spark.get("broadband", new BroadbandHandler(datasource));
-
     Spark.init();
     Spark.awaitInitialization();
 
-    // Notice this link alone leads to a 404... Why is that?
     System.out.println("Server started at http://localhost:" + port);
   }
 
@@ -53,16 +47,9 @@ public class Server {
     String dateTime = dateFormat.format(date);
 
     ACSData acsData = new ACSData("23");
-
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();
-
     Server server = new Server(csvState, new ACSProxy(real, 10, 1));
   }
 }
-// /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
-// /searchcsv?columnIdentifier=City/Town&searchItem=Bristol
-// http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/&hasHeader=true
-// http://localhost:3232/searchcsv?hasHeader=true&searchItem=Barrington
 
-// date/time, javdoc, testing, readne

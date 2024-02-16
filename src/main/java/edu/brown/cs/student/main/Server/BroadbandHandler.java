@@ -45,7 +45,6 @@ public class BroadbandHandler implements Route {
     }
 
     if (county == null || state == null || county.isEmpty() || state.isEmpty()) {
-      // return new noHasHeaderInputParam().serialize();
       return new missingInputParam().serialize();
     }
 
@@ -58,21 +57,20 @@ public class BroadbandHandler implements Route {
     }
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
-    // gets state and county codes to pass into the datasource get percentage broadband access
+
+    // Gets state and county codes to pass into the datasource
     String stateCode = this.stateCodesMap.get(state);
     if (stateCode == null) {
       return new stateNotFound().serialize();
     }
 
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
-
     if (countyCode == null) {
       return new countyNotFound().serialize();
     }
 
     try {
       ACSData acsData = this.datasource.getPercentageBBAccess(stateCode, countyCode);
-
       String dateTime = this.datasource.getDateTime();
       responseMap.put("parameters", List.of(county, state));
       responseMap.put("Time of API Call to ACS", dateTime);
@@ -137,8 +135,6 @@ public class BroadbandHandler implements Route {
     this.stateCodesMap = stateCodesMap;
   }
 
-  //    countyName must be in format "county name, state name" ??????
-
   /**
    * Method where given a user inputted county name, it queries the ACS API and finds the
    * corresponding county code.
@@ -180,7 +176,6 @@ public class BroadbandHandler implements Route {
       }
     }
 
-    // if we never find a matching county in the state
     return null;
   }
 
@@ -192,9 +187,7 @@ public class BroadbandHandler implements Route {
     public BroadbandSuccessResponse(Map<String, Object> resultMap) {
       this("success", resultMap);
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       try {
         Moshi moshi = new Moshi.Builder().build();
@@ -213,9 +206,7 @@ public class BroadbandHandler implements Route {
     public missingInputParam() {
       this("error_bad_request: missing either county param, state param, or both");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.missingInputParam.class).toJson(this);
@@ -227,9 +218,7 @@ public class BroadbandHandler implements Route {
     public invalidInputParam() {
       this("error_bad_request: ensure capitalization's on " + county + " or " + state);
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.invalidInputParam.class).toJson(this);
@@ -241,9 +230,7 @@ public class BroadbandHandler implements Route {
     public invalidCounty() {
       this("error_bad_request: ensure space in county name");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.invalidCounty.class).toJson(this);
@@ -258,9 +245,7 @@ public class BroadbandHandler implements Route {
               + state
               + " not found, check formatting or state is valid state");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.stateNotFound.class).toJson(this);
@@ -274,9 +259,7 @@ public class BroadbandHandler implements Route {
               + county
               + " not found, check formatting or county is valid county");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.countyNotFound.class).toJson(this);

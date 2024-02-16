@@ -88,9 +88,7 @@ public class SearchHandler implements Route {
     public SearchSuccessResponse(Set<String> params, List<List<String>> resSearch) {
       this("success", params, resSearch);
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       try {
         Moshi moshi = new Moshi.Builder().build();
@@ -108,9 +106,7 @@ public class SearchHandler implements Route {
     public SearchNoMatchFailureResponse() {
       this("error_no_match");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(SearchNoMatchFailureResponse.class).toJson(this);
@@ -122,9 +118,7 @@ public class SearchHandler implements Route {
     public FileNotLoadedResponse() {
       this("error_bad_request");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);

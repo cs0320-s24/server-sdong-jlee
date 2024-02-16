@@ -6,16 +6,15 @@ package edu.brown.cs.student.main.ACS;
  * issue uniformly if they wish, without looking inside.
  */
 public class DatasourceException extends Exception {
-  // The root cause of this datasource problem
   private final Throwable cause;
 
   public DatasourceException(String message) {
-    super(message); // Exception message
+    super(message);
     this.cause = null;
   }
 
   public DatasourceException(String message, Throwable cause) {
-    super(message); // Exception message
+    super(message);
     this.cause = cause;
   }
 

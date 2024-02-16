@@ -98,10 +98,7 @@ public class LoadHandler implements Route {
     public LoadFileDNEFailureResponse() {
       this("error_datasource: " + filepath + " does not exist");
     }
-
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.LoadFileDNEFailureResponse.class).toJson(this);
@@ -113,10 +110,7 @@ public class LoadHandler implements Route {
     public LoadFileEmptyFailureResponse() {
       this("error_bad_request: file path parameter empty");
     }
-
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.LoadFileEmptyFailureResponse.class).toJson(this);
@@ -128,9 +122,7 @@ public class LoadHandler implements Route {
     public LoadFileOutsideDirectoryFailureResponse() {
       this("error_datasource");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.LoadFileOutsideDirectoryFailureResponse.class).toJson(this);
@@ -142,9 +134,7 @@ public class LoadHandler implements Route {
     public InvalidHasHeaderInput() {
       this("error_bad_request: " + "'" + hasHeaderString + "'" + " not equal to true or false");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.InvalidHasHeaderInput.class).toJson(this);
@@ -156,9 +146,7 @@ public class LoadHandler implements Route {
     public NoHasHeaderInput() {
       this("error_bad_request: loadcsv endpoint requires a hasHeader parameter");
     }
-    /**
-     * @return this response, serialized as Json
-     */
+    /** @return this response, serialized as Json */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.NoHasHeaderInput.class).toJson(this);
