@@ -1,8 +1,8 @@
 package edu.brown.cs.student.main.Server;
 
 /**
- * A shared CSV state for LoadHandler, SearchHandler, and ViewHandler to ensure operation on the same CSV file.
- * Allows for updates to the CSVState to be seen by all three handlers.
+ * A shared CSV state for LoadHandler, SearchHandler, and ViewHandler to ensure operation on the
+ * same CSV file. Allows for updates to the CSVState to be seen by all three handlers.
  */
 public class CSVState {
   private String fileName;
@@ -26,8 +26,7 @@ public class CSVState {
     return this.fileName;
   }
 
-  public boolean getHasHeader(){
+  public boolean getHasHeader() {
     return hasHeader;
   }
-
 }

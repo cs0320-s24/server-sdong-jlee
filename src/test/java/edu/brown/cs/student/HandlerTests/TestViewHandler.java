@@ -69,7 +69,8 @@ public class TestViewHandler {
 
   @Test
   public void workingView() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
     HttpURLConnection clientConnectionView = tryRequest("viewcsv");
     assertEquals(200, clientConnectionView.getResponseCode());
@@ -87,8 +88,9 @@ public class TestViewHandler {
 
   @Test
   public void noLoadBeforeView() throws IOException, URISyntaxException, InterruptedException {
-//    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
-//    assertEquals(200, clientConnection.getResponseCode());
+    //    HttpURLConnection clientConnection =
+    // tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
+    //    assertEquals(200, clientConnection.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
@@ -105,9 +107,11 @@ public class TestViewHandler {
 
   @Test
   public void newLoadBeforeView() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
-    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv");
+    HttpURLConnection clientConnectionLoad =
+        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv");
     assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnectionView = tryRequest("viewcsv");
     assertEquals(200, clientConnectionView.getResponseCode());
@@ -122,6 +126,4 @@ public class TestViewHandler {
     assertEquals(List.of("Rhode Island,\"74,489.00\",\"95,198.00\",\"39,603.00\""), result.get(0));
     clientConnection.disconnect();
   }
-
-
 }

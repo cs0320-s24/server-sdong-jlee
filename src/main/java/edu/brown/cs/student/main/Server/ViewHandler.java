@@ -1,45 +1,27 @@
 package edu.brown.cs.student.main.Server;
 
-import com.squareup.moshi.Moshi;
-import edu.brown.cs.student.main.CreatorInterface.StringCreator;
-import edu.brown.cs.student.main.Parse.CSVParser;
-import edu.brown.cs.student.main.Searcher.Search;
-import spark.Request;
-import spark.Response;
-import spark.Route;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Moshi.Builder;
 import edu.brown.cs.student.main.CreatorInterface.StringCreator;
 import edu.brown.cs.student.main.Parse.CSVParser;
-import edu.brown.cs.student.main.Searcher.Search;
-import edu.brown.cs.student.main.Server.SearchHandler.SearchSuccessResponse;
-//import edu.brown.cs.student.main.Server.SearchHandler.UnableToReadFile;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
- * A handler class for the viewcsv endpoint. Returns an entire CSV as List<List<String>> that has been loaded
- * through the loadcsv endpoint.
+ * A handler class for the viewcsv endpoint. Returns an entire CSV as List<List<String>> that has
+ * been loaded through the loadcsv endpoint.
  */
 public class ViewHandler implements Route {
   private CSVState csvState;
 
-  public ViewHandler (CSVState csvState) {
+  public ViewHandler(CSVState csvState) {
     this.csvState = csvState;
   }
 
@@ -65,7 +47,8 @@ public class ViewHandler implements Route {
     } catch (Exception e) {
       return new UnableToReadFile().serialize();
     }
-    CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
+    CSVParser<String> parser =
+        new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
     List<String> parsedFile = parser.parseCSV();
     // to add to response map
     List<List<String>> viewResult = new ArrayList<>();
@@ -84,12 +67,14 @@ public class ViewHandler implements Route {
       this("success", data);
     }
 
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       try {
         Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<ViewHandler.ViewSuccessResponse> adapter = moshi.adapter(
-            ViewHandler.ViewSuccessResponse.class);
+        JsonAdapter<ViewHandler.ViewSuccessResponse> adapter =
+            moshi.adapter(ViewHandler.ViewSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
         e.printStackTrace();
@@ -102,7 +87,9 @@ public class ViewHandler implements Route {
     public FileNotLoadedResponse() {
       this("error_bad_request: file must be loaded before viewing");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
@@ -114,12 +101,12 @@ public class ViewHandler implements Route {
     public UnableToReadFile() {
       this("error_datasource: unable to read file");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(ViewHandler.UnableToReadFile.class).toJson(this);
     }
   }
 }
-
-

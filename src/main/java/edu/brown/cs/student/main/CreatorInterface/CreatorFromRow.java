@@ -13,6 +13,4 @@ public interface CreatorFromRow<T> {
 
   //  have to parse first before iterating (check ed)
   Boolean iterate(String row, String searchItem);
-
-
 }

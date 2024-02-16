@@ -1,8 +1,6 @@
 package edu.brown.cs.student.main.ACS;
 
-import java.util.Date;
-
-public class MockedACSAPISource implements ACSDatasource{
+public class MockedACSAPISource implements ACSDatasource {
   private final ACSData constantData;
 
   public MockedACSAPISource(ACSData constantData) {
@@ -18,5 +16,4 @@ public class MockedACSAPISource implements ACSDatasource{
   public String getDateTime() {
     return "today and now";
   }
-
 }

@@ -2,7 +2,6 @@ package edu.brown.cs.student.CacheTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.beust.ah.A;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.ACS.ACSData;
 import edu.brown.cs.student.main.ACS.ACSDatasource;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,7 +76,8 @@ public class TestACSProxy {
   @Test
   public void testCacheBasic()
       throws IOException, URISyntaxException, InterruptedException, DatasourceException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=Kings%20County&state=California");
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?county=Kings%20County&state=California");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
     BroadbandHandler.BroadbandSuccessResponse response =
@@ -95,7 +94,8 @@ public class TestACSProxy {
     Spark.init();
     Spark.awaitInitialization();
 
-    HttpURLConnection clientConnectionCached = tryRequest("broadband?county=Kings%20County&state=California");
+    HttpURLConnection clientConnectionCached =
+        tryRequest("broadband?county=Kings%20County&state=California");
     assertEquals(200, clientConnectionCached.getResponseCode());
     BroadbandHandler.BroadbandSuccessResponse responseCached =
         moshi
@@ -111,7 +111,8 @@ public class TestACSProxy {
 
   @Test
   public void testCacheEviction()
-      throws IOException, URISyntaxException, InterruptedException, DatasourceException, ExecutionException {
+      throws IOException, URISyntaxException, InterruptedException, DatasourceException,
+          ExecutionException {
     ACSData acsData = new ACSData("23");
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();
@@ -131,7 +132,8 @@ public class TestACSProxy {
 
   @Test
   public void testCacheHits()
-      throws IOException, URISyntaxException, InterruptedException, DatasourceException, ExecutionException {
+      throws IOException, URISyntaxException, InterruptedException, DatasourceException,
+          ExecutionException {
     ACSData acsData = new ACSData("23");
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();

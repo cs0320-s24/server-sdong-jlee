@@ -33,7 +33,6 @@ public class CSVParser<T> {
   /** boolean to determine if CSV contains a header */
   Boolean hasHeader;
 
-
   /**
    * CSVParser constructor, sets header to "" to determine later
    *

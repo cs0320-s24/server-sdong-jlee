@@ -11,16 +11,17 @@ import edu.brown.cs.student.main.Cache.ACSProxy;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import spark.Spark;
 
 /**
- * Class representing a server. Begin the server by running this class and navigating to the desired endpoints.
+ * Class representing a server. Begin the server by running this class and navigating to the desired
+ * endpoints.
  */
 public class Server {
 
   // constructor
-    // TODO params - fake data class, actual retrieval process class, cache or no cache (specified in main),
+  // TODO params - fake data class, actual retrieval process class, cache or no cache (specified in
+  // main),
   public Server(CSVState csvState, ACSDatasource datasource)
       throws DatasourceException, IOException {
     int port = 3232;
@@ -56,7 +57,7 @@ public class Server {
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();
 
-    Server server = new Server(csvState, new ACSProxy(real,10, 1));
+    Server server = new Server(csvState, new ACSProxy(real, 10, 1));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
