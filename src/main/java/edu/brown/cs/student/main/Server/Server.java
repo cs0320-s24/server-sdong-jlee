@@ -51,12 +51,12 @@ public class Server {
     Date date = new Date();
     String dateTime = dateFormat.format(date);
 
-    ACSData acsData = new ACSData("23", dateTime);
+    ACSData acsData = new ACSData("23");
 
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();
 
-    Server server = new Server(csvState, new ACSProxy(mocked, 1));
+    Server server = new Server(csvState, new ACSProxy(real, 1));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true

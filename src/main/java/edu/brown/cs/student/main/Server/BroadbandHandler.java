@@ -60,7 +60,11 @@ public class BroadbandHandler implements Route {
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
     try {
       ACSData acsData = this.datasource.getPercentageBBAccess(stateCode, countyCode);
+
+      String dateTime = this.datasource.getDateTime();
+      System.out.println(dateTime);
       responseMap.put("parameters", List.of(county, state));
+      responseMap.put("Date/time of API Call to ACS", dateTime);
 //
 //      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //      //TODO check if this is right way to add date and time

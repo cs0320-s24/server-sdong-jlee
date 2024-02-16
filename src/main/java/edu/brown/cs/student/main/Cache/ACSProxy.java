@@ -44,12 +44,16 @@ public class ACSProxy implements ACSDatasource {
             });
   }
 
-
   @Override
   public ACSData getPercentageBBAccess(String stateCode, String countyCode)
       throws IOException, DatasourceException, ExecutionException {
     List<String> stateAndCountyCode = new ArrayList<>(Arrays.asList(stateCode, countyCode));
     System.out.println(stateAndCountyCode);
     return cache.get(stateAndCountyCode);
+  }
+
+  @Override
+  public String getDateTime() {
+    return this.acsDatasource.getDateTime();
   }
 }

@@ -5,16 +5,16 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import okio.Buffer;
 
 public class RealACSAPISource implements ACSDatasource{
+
+  static String dateTime;
 
   private static HttpURLConnection connect(URL requestURL)
       throws DatasourceException, IOException {
@@ -45,6 +45,8 @@ public class RealACSAPISource implements ACSDatasource{
 
     System.out.println(broadBandAccessList); // records are nice for giving auto toString
 
+
+
     clientConnection.disconnect();
     // Validity checks for response
     if(broadBandAccessList == null) { throw new DatasourceException("Malformed response from ACSAPI"); }
@@ -52,8 +54,14 @@ public class RealACSAPISource implements ACSDatasource{
     // Get the Date/Time data is retrieved
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Date date = new Date();
-    String dateTime = dateFormat.format(date);
+    dateTime = dateFormat.format(date);
 
-    return new ACSData(broadBandAccessList.get(1).get(1), dateTime);
+
+    return new ACSData(broadBandAccessList.get(1).get(1));
+  }
+
+  @Override
+  public String getDateTime() {
+    return dateTime;
   }
 }

@@ -14,4 +14,9 @@ public class MockedACSAPISource implements ACSDatasource{
     return constantData;
   }
 
+  @Override
+  public String getDateTime() {
+    return "today and now";
+  }
+
 }
