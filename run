@@ -31,7 +31,7 @@ CP=$(cat .mvn-classpath)
 # recommended package structure.
 
 # Find Server.java. It should be in a package below your username package.
-MAIN=$(ls src/main/java/edu/brown/cs/*/*/server/Server.java)
+MAIN=$(ls src/main/java/edu/brown/cs/*/*/Server/Server.java)
 [ -z "$MAIN" ] && echo "You need a Server.java" && exit 1
 [ ! -e "$MAIN" ] && echo "You can only have one Server.java" && exit 1
 
@@ -47,4 +47,4 @@ fi
 # NOTE: You MUST package your Server at the path specified below, if you do not, it likely
 # will NOT run. If you change the package structure of your Server class. You must change this path
 # as well.
-java -ea -cp "$TARGET$PATHSEP$CP" edu.brown.cs.student.main.server.Server "$@"
+java -ea -cp "$TARGET$PATHSEP$CP" edu.brown.cs.student.main.Server.Server "$@"

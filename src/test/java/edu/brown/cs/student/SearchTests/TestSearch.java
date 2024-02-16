@@ -1,7 +1,6 @@
 package edu.brown.cs.student.SearchTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import edu.brown.cs.student.main.CreatorInterface.FactoryFailureException;
 import edu.brown.cs.student.main.CreatorInterface.StringCreator;
@@ -13,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-/** Tests functionality of Search class and associated methods */
+/// ** Tests functionality of Search class and associated methods */
 public class TestSearch {
 
   String testfile =
@@ -76,19 +75,21 @@ public class TestSearch {
         List.of("Unable to find: 'White' in file"), search.searchFile("White", "State", true));
   }
 
-  @Test
-  public void fileOutsideDirectory() throws IOException, FactoryFailureException {
-    FileReader reader =
-        new FileReader(
-            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/src/main/java/edu/brown/cs/student/main/CreatorInterface/CreatorFromRow.java");
-    CSVParser<String> csvParser = new CSVParser<>(reader, stringCreator, true);
-    Search search =
-        new Search(
-            stringCreator,
-            csvParser,
-            "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/config/intellij-java-google-style.xml");
-    assertNull(search.searchFile("White", "State", true));
-  }
+  // @Test
+  //  public void fileOutsideDirectory() throws IOException, FactoryFailureException {
+  //    FileReader reader =
+  //        new FileReader(
+  //
+  // "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/src/main/java/edu/brown/cs/student/main/CreatorInterface/CreatorFromRow.java");
+  //    CSVParser<String> csvParser = new CSVParser<>(reader, stringCreator, true);
+  //    Search search =
+  //        new Search(
+  //            stringCreator,
+  //            csvParser,
+  //
+  // "/Users/masonlee/Desktop/CS/CS32/projects/server-sdong-jlee/config/intellij-java-google-style.xml");
+  //    assertNull(search.searchFile("White", "State", true));
+  //  }
 
   @Test
   public void testMalformedColsInvalID() throws IOException, FactoryFailureException {

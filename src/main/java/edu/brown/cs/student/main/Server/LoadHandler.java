@@ -2,8 +2,6 @@ package edu.brown.cs.student.main.Server;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import edu.brown.cs.student.main.Server.SearchHandler.SearchNoMatchFailureResponse;
-import edu.brown.cs.student.main.Server.SearchHandler.SearchSuccessResponse;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +11,10 @@ import spark.Response;
 import spark.Route;
 
 /**
- * A handler class for the loadcsv endpoint. Takes in two parameters, filepath - a filepath starting with "data/", and
- * hasHeader - an argument to searchFile in the Search class.Attempts to update the CSVState with the user-provided CSV
- * filename. Then, in preparation for viewcsv and searchcsv endpoints, the handler also sets the CSVState hasHeader field.
+ * A handler class for the loadcsv endpoint. Takes in two parameters, filepath - a filepath starting
+ * with "data/", and hasHeader - an argument to searchFile in the Search class.Attempts to update
+ * the CSVState with the user-provided CSV filename. Then, in preparation for viewcsv and searchcsv
+ * endpoints, the handler also sets the CSVState hasHeader field.
  */
 public class LoadHandler implements Route {
   private CSVState csvState;
@@ -78,12 +77,14 @@ public class LoadHandler implements Route {
     public LoadSuccessResponse(String filepath) {
       this("success", filepath);
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       try {
         Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<LoadHandler.LoadSuccessResponse> adapter = moshi.adapter(
-            LoadHandler.LoadSuccessResponse.class);
+        JsonAdapter<LoadHandler.LoadSuccessResponse> adapter =
+            moshi.adapter(LoadHandler.LoadSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
         e.printStackTrace();
@@ -98,7 +99,9 @@ public class LoadHandler implements Route {
       this("error_datasource: " + filepath + " does not exist");
     }
 
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.LoadFileDNEFailureResponse.class).toJson(this);
@@ -106,12 +109,14 @@ public class LoadHandler implements Route {
   }
 
   /** Response object to send, when no filepath is provided */
-  public record LoadFileEmptyFailureResponse(String result ) {
+  public record LoadFileEmptyFailureResponse(String result) {
     public LoadFileEmptyFailureResponse() {
       this("error_bad_request: file path parameter empty");
     }
 
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.LoadFileEmptyFailureResponse.class).toJson(this);
@@ -123,7 +128,9 @@ public class LoadHandler implements Route {
     public LoadFileOutsideDirectoryFailureResponse() {
       this("error_datasource");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.LoadFileOutsideDirectoryFailureResponse.class).toJson(this);
@@ -133,9 +140,11 @@ public class LoadHandler implements Route {
   /** Response object to send, when hasHeader parameter is not true or false */
   public record InvalidHasHeaderInput(String result) {
     public InvalidHasHeaderInput() {
-      this("error_bad_request: " + "'"+hasHeaderString+"'" + " not equal to true or false");
+      this("error_bad_request: " + "'" + hasHeaderString + "'" + " not equal to true or false");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.InvalidHasHeaderInput.class).toJson(this);
@@ -147,7 +156,9 @@ public class LoadHandler implements Route {
     public NoHasHeaderInput() {
       this("error_bad_request: loadcsv endpoint requires a hasHeader parameter");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(LoadHandler.NoHasHeaderInput.class).toJson(this);

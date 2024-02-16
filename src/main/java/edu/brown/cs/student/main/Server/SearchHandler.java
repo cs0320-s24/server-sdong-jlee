@@ -17,9 +17,10 @@ import spark.Response;
 import spark.Route;
 
 /**
- * A handler class for the searchcsv endpoint which queries two paramaters, columnIdentifier and search Item which
- * are arguments to the searcFile method outlined in Search. Uses the Search class to search an already loaded CSV
- * and sends back a response of matching values as a List<List<String>>.
+ * A handler class for the searchcsv endpoint which queries two paramaters, columnIdentifier and
+ * search Item which are arguments to the searcFile method outlined in Search. Uses the Search class
+ * to search an already loaded CSV and sends back a response of matching values as a
+ * List<List<String>>.
  */
 public class SearchHandler implements Route {
   private CSVState csvState;
@@ -51,10 +52,10 @@ public class SearchHandler implements Route {
     // Check that filepath is valid in LoadHandler
     FileReader freader = new FileReader("data/" + file);
 
-    CSVParser<String> parser = new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
+    CSVParser<String> parser =
+        new CSVParser<>(freader, stringCreator, this.csvState.getHasHeader());
     Search search = new Search(stringCreator, parser, file);
     List<String> searchResult;
-
 
     if (columnIdentifier == null) {
       searchResult = search.searchFile(searchItem);
@@ -82,11 +83,14 @@ public class SearchHandler implements Route {
   }
 
   /** Response object to send, when search is successful */
-  public record SearchSuccessResponse(String result, Set<String> parameters, List<List<String>> data) {
+  public record SearchSuccessResponse(
+      String result, Set<String> parameters, List<List<String>> data) {
     public SearchSuccessResponse(Set<String> params, List<List<String>> resSearch) {
       this("success", params, resSearch);
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       try {
         Moshi moshi = new Moshi.Builder().build();
@@ -104,7 +108,9 @@ public class SearchHandler implements Route {
     public SearchNoMatchFailureResponse() {
       this("error_no_match");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(SearchNoMatchFailureResponse.class).toJson(this);
@@ -116,11 +122,12 @@ public class SearchHandler implements Route {
     public FileNotLoadedResponse() {
       this("error_bad_request");
     }
-    /** @return this response, serialized as Json */
+    /**
+     * @return this response, serialized as Json
+     */
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(FileNotLoadedResponse.class).toJson(this);
     }
   }
-
 }

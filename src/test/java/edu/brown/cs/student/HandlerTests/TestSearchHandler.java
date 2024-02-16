@@ -1,14 +1,9 @@
 package edu.brown.cs.student.HandlerTests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Server.*;
-import okio.Buffer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import spark.Spark;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
@@ -16,8 +11,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import okio.Buffer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import spark.Spark;
 
 public class TestSearchHandler {
     @BeforeAll
@@ -121,6 +120,4 @@ public class TestSearchHandler {
 
         searchConnection.disconnect();
     }
-
-
 }

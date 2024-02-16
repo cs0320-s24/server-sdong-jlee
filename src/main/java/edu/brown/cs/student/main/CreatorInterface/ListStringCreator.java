@@ -3,11 +3,10 @@ package edu.brown.cs.student.main.CreatorInterface;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class ListStringCreator implements CreatorFromRow<List<String>>{
+public class ListStringCreator implements CreatorFromRow<List<String>> {
 
   static final Pattern regexSplitCSVRow =
       Pattern.compile(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*(?![^\\\"]*\\\"))");
-
 
   @Override
   public List<String> create(List<String> row) throws FactoryFailureException {

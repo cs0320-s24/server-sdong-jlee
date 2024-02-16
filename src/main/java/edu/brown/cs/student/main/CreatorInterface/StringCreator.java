@@ -29,7 +29,7 @@ public class StringCreator implements CreatorFromRow<String> {
   /**
    * method utilized in search when trying to find if a key word is in a given row
    *
-   * @param row        - row of CSV
+   * @param row - row of CSV
    * @param searchItem - key word to search for
    * @return - true if can find word otherwise false
    */
@@ -46,5 +46,4 @@ public class StringCreator implements CreatorFromRow<String> {
     }
     return false;
   }
-
 }

@@ -67,7 +67,8 @@ public class TestBroadbandHandler {
 
   @Test
   public void workingBroadband() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=Kings%20County&state=California");
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?county=Kings%20County&state=California");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
     BroadbandHandler.BroadbandSuccessResponse response =
@@ -92,14 +93,14 @@ public class TestBroadbandHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     assert response != null;
     String result = response.result();
-    //assertEquals("error_bad_request: missing either county param, state param, or both", result);
+    // assertEquals("error_bad_request: missing either county param, state param, or both", result);
     clientConnection.disconnect();
-
   }
 
   @Test
   public void paramNoCap() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=kings%20County&state=California");
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?county=kings%20County&state=California");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
     BroadbandHandler.invalidInputParam response =
@@ -108,13 +109,15 @@ public class TestBroadbandHandler {
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     assert response != null;
     String result = response.result();
-    assertEquals("error_bad_request: ensure capitalization's on kings County or California", result);
+    assertEquals(
+        "error_bad_request: ensure capitalization's on kings County or California", result);
     clientConnection.disconnect();
   }
 
   @Test
   public void countyNoSpace() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=KingsCounty&state=California");
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?county=KingsCounty&state=California");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
     BroadbandHandler.invalidCounty response =
@@ -127,4 +130,39 @@ public class TestBroadbandHandler {
     clientConnection.disconnect();
   }
 
+  @Test
+  public void notRealCounty() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?county=Burger%20County&state=California");
+    assertEquals(200, clientConnection.getResponseCode());
+    Moshi moshi = new Moshi.Builder().build();
+    BroadbandHandler.countyNotFound response =
+        moshi
+            .adapter(BroadbandHandler.countyNotFound.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert response != null;
+    String result = response.result();
+    assertEquals(
+        "error_bad_request: county: Burger County not found, check formatting or county is valid county",
+        result);
+    clientConnection.disconnect();
+  }
+
+  @Test
+  public void notRealState() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?county=Kings%20County&state=FakeState");
+    assertEquals(200, clientConnection.getResponseCode());
+    Moshi moshi = new Moshi.Builder().build();
+    BroadbandHandler.stateNotFound response =
+        moshi
+            .adapter(BroadbandHandler.stateNotFound.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert response != null;
+    String result = response.result();
+    assertEquals(
+        "error_bad_request: state: FakeState not found, check formatting or state is valid state",
+        result);
+    clientConnection.disconnect();
+  }
 }

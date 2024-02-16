@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
@@ -66,7 +65,8 @@ public class TestLoadHandler {
 
   @Test
   public void workingFile() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
     LoadHandler.LoadSuccessResponse response =
@@ -79,9 +79,12 @@ public class TestLoadHandler {
 
     clientConnection.disconnect();
   }
+
   @Test
   public void fileOutsideDirectory() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=src/main/java/edu/brown/cs/student/main/Server/BroadbandHandler.java&hasHeader=true");
+    HttpURLConnection clientConnection =
+        tryRequest(
+            "loadcsv?filepath=src/main/java/edu/brown/cs/student/main/Server/BroadbandHandler.java&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -95,9 +98,11 @@ public class TestLoadHandler {
     assertEquals("error_datasource", result);
     clientConnection.disconnect();
   }
+
   @Test
   public void fileDNE() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/census/aslkdjfaklsdf.csv&hasHeader=true");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/census/aslkdjfaklsdf.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -110,8 +115,8 @@ public class TestLoadHandler {
     String result = response.result();
     assertEquals("error_datasource: data/census/aslkdjfaklsdf.csv does not exist", result);
     clientConnection.disconnect();
-
   }
+
   @Test
   public void filepathEmpty() throws IOException, URISyntaxException, InterruptedException {
     HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=&hasHeader=true");
@@ -131,7 +136,8 @@ public class TestLoadHandler {
 
   @Test
   public void emptyHeaderParam() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -142,12 +148,14 @@ public class TestLoadHandler {
 
     assert response != null;
     String result = response.result();
-    assertEquals("error_bad_request: hasHeader parameter empty", result);
+    assertEquals("error_bad_request: loadcsv endpoint requires a hasHeader parameter", result);
     clientConnection.disconnect();
   }
+
   @Test
   public void invalidHeaderParam() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=TRUE");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=TRUE");
     assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
@@ -161,6 +169,7 @@ public class TestLoadHandler {
     assertEquals("error_bad_request: 'TRUE' not equal to true or false", result);
     clientConnection.disconnect();
   }
+
   @Test
   public void noHeaderParam() throws IOException, URISyntaxException, InterruptedException {
     HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv");
@@ -177,5 +186,4 @@ public class TestLoadHandler {
     assertEquals("error_bad_request: loadcsv endpoint requires a hasHeader parameter", result);
     clientConnection.disconnect();
   }
-
 }
