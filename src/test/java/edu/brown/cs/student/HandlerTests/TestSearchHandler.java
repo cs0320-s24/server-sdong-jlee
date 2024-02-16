@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,14 +76,13 @@ public class TestSearchHandler {
         assertEquals(200, searchConnection.getResponseCode());
 
         Moshi moshi = new Moshi.Builder().build();
-        LoadHandler.LoadSuccessResponse response =
+        SearchHandler.SearchSuccessResponse response =
                 moshi
-                        .adapter(LoadHandler.LoadSuccessResponse.class)
+                        .adapter(SearchHandler.SearchSuccessResponse.class)
                         .fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
         assert response != null;
-        String result = response.result();
-        assertEquals("success", result);
-
+        List<List<String>> result = response.data();
+        assertEquals(List.of("Bristol,\"80,727.00\",\"115,740.00\",\"42,658.00\"\n"), result.get(0));
         searchConnection.disconnect();
     }
 
@@ -94,9 +94,9 @@ public class TestSearchHandler {
         assertEquals(200, searchConnection.getResponseCode());
 
         Moshi moshi = new Moshi.Builder().build();
-        LoadHandler.LoadSuccessResponse response =
+        SearchHandler.SearchNoMatchFailureResponse response =
                 moshi
-                        .adapter(LoadHandler.LoadSuccessResponse.class)
+                        .adapter(SearchHandler.SearchNoMatchFailureResponse.class)
                         .fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
         assert response != null;
         String result = response.result();
@@ -111,9 +111,9 @@ public class TestSearchHandler {
         assertEquals(200, searchConnection.getResponseCode());
 
         Moshi moshi = new Moshi.Builder().build();
-        LoadHandler.LoadSuccessResponse response =
+        SearchHandler.FileNotLoadedResponse response =
                 moshi
-                        .adapter(LoadHandler.LoadSuccessResponse.class)
+                        .adapter(SearchHandler.FileNotLoadedResponse.class)
                         .fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
         assert response != null;
         String result = response.result();

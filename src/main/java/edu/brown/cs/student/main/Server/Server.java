@@ -56,7 +56,7 @@ public class Server {
     ACSDatasource mocked = new MockedACSAPISource(acsData);
     ACSDatasource real = new RealACSAPISource();
 
-    Server server = new Server(csvState, new ACSProxy(real,10, 1));
+    Server server = new Server(csvState, new ACSProxy(mocked,10, 1));
   }
 }
 // /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
