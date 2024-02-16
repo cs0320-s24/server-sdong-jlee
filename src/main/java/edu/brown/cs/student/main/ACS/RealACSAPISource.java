@@ -42,20 +42,15 @@ public class RealACSAPISource implements ACSDatasource{
         Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class))).nonNull();
 
     List<List<String>> broadBandAccessList = (List<List<String>>) adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-
     System.out.println(broadBandAccessList); // records are nice for giving auto toString
-
-
-
     clientConnection.disconnect();
     // Validity checks for response
     if(broadBandAccessList == null) { throw new DatasourceException("Malformed response from ACSAPI"); }
-
+    //TODO check if this is right way to add date and time
     // Get the Date/Time data is retrieved
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Date date = new Date();
     dateTime = dateFormat.format(date);
-
 
     return new ACSData(broadBandAccessList.get(1).get(1));
   }

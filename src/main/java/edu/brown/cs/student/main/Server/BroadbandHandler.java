@@ -52,6 +52,10 @@ public class BroadbandHandler implements Route {
       return new invalidInputParam().serialize();
     }
 
+    if (!county.contains(" ")) {
+      return new invalidCounty().serialize();
+    }
+
     // TODO add more checks for proper formatting of inputs like capital words etc, also how to deal with spaces for county?
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
@@ -62,18 +66,9 @@ public class BroadbandHandler implements Route {
       ACSData acsData = this.datasource.getPercentageBBAccess(stateCode, countyCode);
 
       String dateTime = this.datasource.getDateTime();
-      System.out.println(dateTime);
       responseMap.put("parameters", List.of(county, state));
-      responseMap.put("Date/time of API Call to ACS", dateTime);
-//
-//      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//      //TODO check if this is right way to add date and time
-//      Date date = new Date();
-//      String dateTime = dateFormat.format(date);
-//      responseMap.put("date/time", dateTime);
-
+      responseMap.put("Time of API Call to ACS", dateTime);
       responseMap.put("Broadband Percentage", acsData);
-
       return new BroadbandSuccessResponse(responseMap).serialize();
     } catch (Exception e) {
       e.printStackTrace();
@@ -204,6 +199,18 @@ public class BroadbandHandler implements Route {
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.invalidInputParam.class).toJson(this);
+    }
+  }
+
+  /** Response object to send, when a county or state parameter is invalid */
+  public record invalidCounty(String result) {
+    public invalidCounty() {
+      this("error_bad_request: ensure space in county name");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(BroadbandHandler.invalidCounty.class).toJson(this);
     }
   }
 }
