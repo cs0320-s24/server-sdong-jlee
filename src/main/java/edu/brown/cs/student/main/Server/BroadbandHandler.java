@@ -137,7 +137,6 @@ public class BroadbandHandler implements Route {
     this.stateCodesMap = stateCodesMap;
   }
 
-  //    countyName must be in format "county name, state name" ??????
 
   /**
    * Method where given a user inputted county name, it queries the ACS API and finds the
