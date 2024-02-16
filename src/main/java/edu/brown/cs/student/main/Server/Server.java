@@ -18,10 +18,6 @@ import spark.Spark;
  * endpoints.
  */
 public class Server {
-
-  // constructor
-  // TODO params - fake data class, actual retrieval process class, cache or no cache (specified in
-  // main),
   public Server(CSVState csvState, ACSDatasource datasource)
       throws DatasourceException, IOException {
     int port = 3232;
@@ -41,10 +37,16 @@ public class Server {
     Spark.init();
     Spark.awaitInitialization();
 
-    // Notice this link alone leads to a 404... Why is that?
     System.out.println("Server started at http://localhost:" + port);
   }
 
+  /**
+   * Main class where the server is created. Developers may change the server configuration to include a real or mocked
+   * data source. There's also an option to include a proxy class for caching response results.
+   * @param args
+   * @throws DatasourceException
+   * @throws IOException
+   */
   public static void main(String[] args) throws DatasourceException, IOException {
     CSVState csvState = new CSVState();
 
@@ -60,9 +62,3 @@ public class Server {
     Server server = new Server(csvState, new ACSProxy(mocked,10, 1));
   }
 }
-// /loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true
-// /searchcsv?columnIdentifier=City/Town&searchItem=Bristol
-// http://localhost:3232/loadcsv?filepath=data/RITownIncome/RI.csv/&hasHeader=true
-// http://localhost:3232/searchcsv?hasHeader=true&searchItem=Barrington
-
-// date/time, javdoc, testing, readne
