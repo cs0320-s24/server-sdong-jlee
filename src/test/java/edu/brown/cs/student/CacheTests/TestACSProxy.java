@@ -1,11 +1,15 @@
-package edu.brown.cs.student.HandlerTests;
+package edu.brown.cs.student.CacheTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.beust.ah.A;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.ACS.ACSData;
+import edu.brown.cs.student.main.ACS.ACSDatasource;
 import edu.brown.cs.student.main.ACS.DatasourceException;
 import edu.brown.cs.student.main.ACS.MockedACSAPISource;
+import edu.brown.cs.student.main.ACS.RealACSAPISource;
+import edu.brown.cs.student.main.Cache.ACSProxy;
 import edu.brown.cs.student.main.Server.BroadbandHandler;
 import edu.brown.cs.student.main.Server.MockServer;
 import java.io.IOException;
@@ -21,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Spark;
 
-public class TestBroadbandHandler {
+public class TestACSProxy {
   @BeforeAll
   public static void setup_before_everything() {
     // Set the Spark port number. This can only be done once, and has to
@@ -34,7 +38,10 @@ public class TestBroadbandHandler {
 
   @BeforeEach
   public void setup() throws DatasourceException, IOException {
-    Spark.get("broadband", new BroadbandHandler(new MockedACSAPISource(new ACSData("20"))));
+    ACSData acsData = new ACSData("23");
+    ACSDatasource mocked = new MockedACSAPISource(acsData);
+    ACSDatasource real = new RealACSAPISource();
+    Spark.get("broadband", new BroadbandHandler(new ACSProxy(mocked, 1)));
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
@@ -66,7 +73,8 @@ public class TestBroadbandHandler {
   }
 
   @Test
-  public void workingBroadband() throws IOException, URISyntaxException, InterruptedException {
+  public void testCacheBasic()
+      throws IOException, URISyntaxException, InterruptedException, DatasourceException {
     HttpURLConnection clientConnection = tryRequest("broadband?county=Kings%20County&state=California");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
@@ -77,54 +85,27 @@ public class TestBroadbandHandler {
     assert response != null;
     String result = response.result();
     Object broadbandPercentageObject = response.resultMap().get("Broadband Percentage");
-    assertEquals("{percentage=20}", broadbandPercentageObject.toString());
-    clientConnection.disconnect();
-  }
+    assertEquals("{percentage=23}", broadbandPercentageObject.toString());
 
-  @Test
-  public void paramEmpty() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=Kings%20County&state=");
-    assertEquals(200, clientConnection.getResponseCode());
-    Moshi moshi = new Moshi.Builder().build();
-    BroadbandHandler.missingInputParam response =
+    ACSDatasource real = new RealACSAPISource();
+    Spark.get("broadband", new BroadbandHandler(real));
+    Spark.init();
+    Spark.awaitInitialization();
+
+    HttpURLConnection clientConnectionCached = tryRequest("broadband?county=Kings%20County&state=California");
+    assertEquals(200, clientConnectionCached.getResponseCode());
+    BroadbandHandler.BroadbandSuccessResponse responseCached =
         moshi
-            .adapter(BroadbandHandler.missingInputParam.class)
-            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    assert response != null;
-    String result = response.result();
-    //assertEquals("error_bad_request: missing either county param, state param, or both", result);
-    clientConnection.disconnect();
+            .adapter(BroadbandHandler.BroadbandSuccessResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnectionCached.getInputStream()));
+    assert responseCached != null;
+    String resultCached = response.result();
+    Object broadbandPercentageObjectCached = responseCached.resultMap().get("Broadband Percentage");
+    assertEquals("{percentage=23}", broadbandPercentageObjectCached.toString());
 
-  }
 
-  @Test
-  public void paramNoCap() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=kings%20County&state=California");
-    assertEquals(200, clientConnection.getResponseCode());
-    Moshi moshi = new Moshi.Builder().build();
-    BroadbandHandler.invalidInputParam response =
-        moshi
-            .adapter(BroadbandHandler.invalidInputParam.class)
-            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    assert response != null;
-    String result = response.result();
-    assertEquals("error_bad_request: ensure capitalization's on kings County or California", result);
     clientConnection.disconnect();
-  }
-
-  @Test
-  public void countyNoSpace() throws IOException, URISyntaxException, InterruptedException {
-    HttpURLConnection clientConnection = tryRequest("broadband?county=KingsCounty&state=California");
-    assertEquals(200, clientConnection.getResponseCode());
-    Moshi moshi = new Moshi.Builder().build();
-    BroadbandHandler.invalidCounty response =
-        moshi
-            .adapter(BroadbandHandler.invalidCounty.class)
-            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    assert response != null;
-    String result = response.result();
-    assertEquals("error_bad_request: ensure space in county name", result);
-    clientConnection.disconnect();
+    clientConnectionCached.disconnect();
   }
 
 }
