@@ -55,13 +55,13 @@ public class BroadbandHandler implements Route {
     if (!county.contains(" ")) {
       return new invalidCounty().serialize();
     }
-
-    // TODO add more checks for proper formatting of inputs like capital words etc, also how to deal with spaces for county?
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
     // gets state and county codes to pass into the datasource get percentage broadband access
     String stateCode = this.stateCodesMap.get(state);
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
+
+
     try {
       ACSData acsData = this.datasource.getPercentageBBAccess(stateCode, countyCode);
 
