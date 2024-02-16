@@ -127,4 +127,34 @@ public class TestBroadbandHandler {
     clientConnection.disconnect();
   }
 
+  @Test
+  public void notRealCounty() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("broadband?county=Burger%20County&state=California");
+    assertEquals(200, clientConnection.getResponseCode());
+    Moshi moshi = new Moshi.Builder().build();
+    BroadbandHandler.countyNotFound response =
+        moshi
+            .adapter(BroadbandHandler.countyNotFound.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert response != null;
+    String result = response.result();
+    assertEquals("error_bad_request: county: Burger County not found, check formatting or county is valid county", result);
+    clientConnection.disconnect();
+  }
+
+  @Test
+  public void notRealState() throws IOException, URISyntaxException, InterruptedException {
+    HttpURLConnection clientConnection = tryRequest("broadband?county=Kings%20County&state=FakeState");
+    assertEquals(200, clientConnection.getResponseCode());
+    Moshi moshi = new Moshi.Builder().build();
+    BroadbandHandler.stateNotFound response =
+        moshi
+            .adapter(BroadbandHandler.stateNotFound.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert response != null;
+    String result = response.result();
+    assertEquals("error_bad_request: state: FakeState not found, check formatting or state is valid state", result);
+    clientConnection.disconnect();
+  }
+
 }

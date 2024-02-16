@@ -59,7 +59,17 @@ public class BroadbandHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     // gets state and county codes to pass into the datasource get percentage broadband access
     String stateCode = this.stateCodesMap.get(state);
+    if (stateCode == null) {
+      return new stateNotFound().serialize();
+    }
+
     String countyCode = this.getCountyCode(stateCode, county + ", " + state);
+
+
+
+    if (countyCode == null) {
+      return new countyNotFound().serialize();
+    }
 
 
     try {
@@ -117,9 +127,6 @@ public class BroadbandHandler implements Route {
       }
       stateCodesMap.put(state, code);
     }
-
-    // TODO when there's a search for county that doesn't exist
-//    if stateCodesMap.isEmpty() {}
 
     this.stateCodesMap = stateCodesMap;
   }
@@ -211,6 +218,29 @@ public class BroadbandHandler implements Route {
     String serialize() {
       Moshi moshi = new Moshi.Builder().build();
       return moshi.adapter(BroadbandHandler.invalidCounty.class).toJson(this);
+    }
+  }
+
+  /** Response object to send, when a county or state parameter is invalid */
+  public record stateNotFound(String result) {
+    public stateNotFound() {
+      this( "error_bad_request: state: " + state + " not found, check formatting or state is valid state");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(BroadbandHandler.stateNotFound.class).toJson(this);
+    }
+  }
+  /** Response object to send, when a county or state parameter is invalid */
+  public record countyNotFound(String result) {
+    public countyNotFound() {
+      this("error_bad_request: county: " + county + " not found, check formatting or county is valid county");
+    }
+    /** @return this response, serialized as Json */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(BroadbandHandler.countyNotFound.class).toJson(this);
     }
   }
 }
