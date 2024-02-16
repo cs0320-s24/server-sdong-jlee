@@ -18,9 +18,12 @@ For each api endpoint (load, view, search, broadband) we set up separate handler
 the ACS specific aspect of broadband, i.e making requests from the ACS api and sending that response to the broadband handler, 
 we created an interface called ACSDatasource that has two methods with the more important one being getPercentageBBAccess(). This way,
 we could create a mocked ACS api class as well as a real ACS api class that implement the ACSDatasource to make the requests to the ACS api to get the response, extract
-the information we want, and send it to the user calling our API. Furthermore, we created a proxy class implementing the ACSDatasource as well
+the information we want, and send it to the user calling our API. By including both a mocked and real data source, we were
+able to test our methods without always calling the ACS API. Furthermore, we created a proxy class implementing the ACSDatasource
 that takes in a specific source (mocked or real) and utilizes the getPercentageBBAccess from the specific source to implement caching with Guava.
-The Broadband handler, utilizes the datasource that is passed in to it to get the percentageBBaccess from whichever datasource we want (real, mocked, with/without cache).
+With the proxy class, developers have a choice of using caching as well as how they want the cache configured. The Broadband 
+handler utilizes the datasource that is passed in to it to get the percentageBBaccess from whichever datasource we want 
+(real, mocked, with/without cache).
 
 Discuss any specific data structures you used, why you created it, and other high level explanations:
 
@@ -31,6 +34,9 @@ knows when the ACS api is called and not everytime that we give the user a respo
 
 To store the state codes from the ACS api, we took the List<List<String>> that we returned with moshi and stored each state to
 state code in a hashmap in order to have constant lookup time after we populate the map with states to state codes. 
+
+Furthermore, to ensure that load/search/view all operate on the same CSV file, we created a CSVState class which acts as
+a shared state between the three handler classes. Whenever fields are updated from one handler, it can be seen in the others.
 
 Runtime/ space optimizations you made (if applicable).
 
@@ -58,4 +64,4 @@ Build and run your program
 To build and run program enter "mvn package" in terminal the "./run" to run the server. For configuring the cache,
 the user developer can either use or not use the ACSproxy class depending on whether they want to use the cache or not. If they
 are using the cache, the user developer can adjust the parameters passed into the ACSproxy class to ensure the cache is 
-working to their desire. 
+working to their desire.

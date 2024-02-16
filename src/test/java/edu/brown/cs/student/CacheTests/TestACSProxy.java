@@ -32,7 +32,6 @@ public class TestACSProxy {
     // happen before any route maps are added. Hence using @BeforeClass.
     // Setting port 0 will cause Spark to use an arbitrary available port.
     MockServer testServer = new MockServer();
-    // Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
 
@@ -66,8 +65,6 @@ public class TestACSProxy {
     // Configure the connection (but don't actually send the request yet)
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
-    // The default method is "GET", which is what we're using here.
-    // If we were using "POST", we'd need to say so.
     clientConnection.setRequestMethod("GET");
     clientConnection.connect();
     return clientConnection;

@@ -26,7 +26,6 @@ public class TestIntegratedHandlers {
         // happen before any route maps are added. Hence using @BeforeClass.
         // Setting port 0 will cause Spark to use an arbitrary available port.
         MockServer testServer = new MockServer();
-        // Spark.port(0);
         Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
     }
 
@@ -61,8 +60,6 @@ public class TestIntegratedHandlers {
         // Configure the connection (but don't actually send the request yet)
         URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
         HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
-        // The default method is "GET", which is what we're using here.
-        // If we were using "POST", we'd need to say so.
         clientConnection.setRequestMethod("GET");
         clientConnection.connect();
         return clientConnection;
@@ -154,7 +151,6 @@ public class TestIntegratedHandlers {
 
         HttpURLConnection searchConnection = tryRequest("searchcsv?columnIdentifier=City/Town&searchItem=Bristol");
         assertEquals(200, searchConnection.getResponseCode());
-
 
         Moshi moshi1 = new Moshi.Builder().build();
         SearchHandler.SearchSuccessResponse response1 =

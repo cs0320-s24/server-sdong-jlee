@@ -26,7 +26,6 @@ public class TestViewHandler {
   public static void setup_before_everything() {
     // Set the Spark port number. This can only be done once, and has to
     // happen before any route maps are added. Hence using @BeforeClass.
-    // Setting port 0 will cause Spark to use an arbitrary available port.
     MockServer testServer = new MockServer();
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
@@ -42,7 +41,6 @@ public class TestViewHandler {
 
   @AfterEach
   public void teardown() {
-    // Gracefully stop Spark listening on both endpoints after each test
     Spark.unmap("loadcsv");
     Spark.unmap("viewcsv");
     Spark.awaitStop(); // don't proceed until the server is stopped
@@ -60,8 +58,6 @@ public class TestViewHandler {
     // Configure the connection (but don't actually send the request yet)
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
-    // The default method is "GET", which is what we're using here.
-    // If we were using "POST", we'd need to say so.
     clientConnection.setRequestMethod("GET");
     clientConnection.connect();
     return clientConnection;
@@ -88,9 +84,6 @@ public class TestViewHandler {
 
   @Test
   public void noLoadBeforeView() throws IOException, URISyntaxException, InterruptedException {
-    //    HttpURLConnection clientConnection =
-    // tryRequest("loadcsv?filepath=data/RITownIncome/RI.csv&hasHeader=true");
-    //    assertEquals(200, clientConnection.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     assertEquals(200, clientConnection.getResponseCode());
     Moshi moshi = new Moshi.Builder().build();
